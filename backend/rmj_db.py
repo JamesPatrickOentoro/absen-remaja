@@ -4,7 +4,7 @@
 print("Before importing pandas")
 from datetime import datetime
 import pandas as pd
-from werkzeug.security import check_password_hash
+# from werkzeug.security import check_password_hash
 from . import db
 from .models import Admin,Jemaat,Absen
 # from .main import app
@@ -140,13 +140,14 @@ def login_admin(input_nama_admin, input_password):
     admins = db.session.query(Admin).filter_by(nama_admin=input_nama_admin).all()
     true_admin = None
     for admin in admins:
-        if check_password_hash(admin.password) == input_password:
+        if admin.password == input_password:
             true_admin = admin
+            break
     if true_admin != None:
-        admin.last_login = datetime.now()
+        true_admin.last_login = datetime.now()
         db.session.commit()
         data = {
-            'nama':admin.nama_admin,
+            'nama_admin':admin.nama_admin,
             'password':admin.password,
             'last_login':admin.last_login,
             'status':'success',

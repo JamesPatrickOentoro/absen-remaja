@@ -26,7 +26,7 @@ img {
 
 /* dalam page AdminView */
 /* input[type=text], */
-select {
+ select {
     width: 90%;
     padding: 5px 10px;
     margin: 8px 0;
@@ -44,12 +44,12 @@ select {
 }
 .col-4{
     display: flex;
-}
+} */
 
 
-.bottom {
-    border: 1px solid #ccc;
-    /* background: green; */
+ .bottom {
+    border: 1px solid #ccc; 
+    background: green;
     align-self: flex-end;
     border-radius: 10px;
     width: 150px;
@@ -76,8 +76,8 @@ label {
     box-shadow: rgba(0, 0, 0, .05) 0 0px 0px 2px;
     min-height: 100vh;
     width: 15%;
-    /* margin: 0; */
-    /* position: relative; */
+    margin: 0;
+    position: relative;
     margin-top: 2px;
     margin-left: -15px;
     padding: 20px;
@@ -110,4 +110,4 @@ label {
 .btn-class:hover {
     background-color: #00ac96;
     color: #fff;
-}
+} 

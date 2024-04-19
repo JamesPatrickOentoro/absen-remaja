@@ -8,8 +8,8 @@ auth = Blueprint('auth', __name__)
 def verify_admin():
     if request.method == 'POST':
         data = request.get_json()
-        curr_username  = data['username']
-        curr_password  = data['password']
+        curr_username  = data.get('nama_admin')
+        curr_password  = data.get('password')
         return jsonify(login_admin(curr_username,curr_password))
     return
 
