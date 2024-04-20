@@ -1,6 +1,6 @@
 // const { defineConfig } = require('@vue/cli-service')
 module.exports = {
-  outputDir: 'dist', // Output directory for Vue build
+  outputDir: 'frontend', // Output directory for Vue build
   devServer: {
     proxy: {
       '/absen': {
