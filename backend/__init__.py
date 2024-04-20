@@ -19,7 +19,7 @@ def run_npm_serve():
 
 def create_app():
     app = Flask(__name__)
-    CORS(app, origins='http://localhost:8080')
+    CORS(app)
     app.config['SECRET_KEY'] = 'kersos'
     app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://root@localhost:3306/{DB_NAME}'
    

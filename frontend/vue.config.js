@@ -1,4 +1,15 @@
-const { defineConfig } = require('@vue/cli-service')
-module.exports = defineConfig({
-  transpileDependencies: true
-})
+// const { defineConfig } = require('@vue/cli-service')
+module.exports = {
+  outputDir: 'dist', // Output directory for Vue build
+  devServer: {
+    proxy: {
+      '/absen': {
+        target: 'http://127.0.0.1:5000', // Target URL of Flask backend
+        changeOrigin: true,
+        pathRewrite: {
+          '^/absen': '' // Rewrite path if needed
+        }
+      }
+    }
+  }
+}

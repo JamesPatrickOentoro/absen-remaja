@@ -86,7 +86,7 @@ export default {
     methods: {
         async fetchAbsents() {
             try {
-                const response = await axios.get('http://127.0.0.1:5000/filter-absent-data', {
+                const response = await axios.get('absen/filter-absent-data', {
                     params: {
                         status: this.filterStatus,
                         nama: this.filterName,

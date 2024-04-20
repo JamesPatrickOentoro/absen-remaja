@@ -107,7 +107,7 @@ export default {
     methods: {
         async registerStudent() {
             try {
-                const res = await axios.post('http://127.0.0.1:5000/student/create', {
+                const res = await axios.post('absen/student/create', {
                     nama: this.formData.nama,
                     no_telp: this.formData.no_telp,
                     email: this.formData.email,

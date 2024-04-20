@@ -61,7 +61,7 @@
                   nama_admin: this.adminUsername,
                   password: this.adminPass
               };
-              axios.post('http://127.0.0.1:5000/admin/login', data)
+              axios.post('absen/admin/login', data)
                   .then(response => {
                       if (response.data.status === 'success') {
                           this.$router.push('/admin-view');
