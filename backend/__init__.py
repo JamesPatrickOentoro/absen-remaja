@@ -21,7 +21,7 @@ def create_app():
     app = Flask(__name__)
     CORS(app, origins='http://localhost:8080')
     app.config['SECRET_KEY'] = 'kersos'
-    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://root@localhost:3306/{DB_NAME}'
+    app.config['SQLALCHEMY_DATABASE_URI'] = f'mysql://root@localhost:3307/{DB_NAME}'
    
     db.init_app(app)
 

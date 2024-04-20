@@ -8,6 +8,7 @@ def run_npm_serve():
     print("Running npm serve function...")
     current_dir = os.path.dirname(os.path.abspath(__file__))
     frontend_dir = os.path.join(current_dir,'frontend')
+    print(frontend_dir)
     if not os.path.isdir(frontend_dir):
         print(f"Error: Directory '{frontend_dir}' not found.")
     os.chdir(frontend_dir)
