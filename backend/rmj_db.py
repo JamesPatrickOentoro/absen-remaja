@@ -542,51 +542,46 @@ def get_absen_by_name(name):
     return list_absen
     
 def visualize_monthly_absen(year, month):
-    list_absen = []
-    # this_month = datetime.strptime(str(date), "%Y-%m")
+    # list_absen = []
+    this_month = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d")
     # print(this_month)
-    abs = db.session.query(Absen.id_absen, Absen.waktu_absen).filter(Absen.waktu_absen >= date).all()
-    for id_jemaat, waktu_absen in abs:
-        data = {
-            "id_jemaat" : id_jemaat,
-            "waktu_absen" : waktu_absen
-        }
-        list_absen.append(data)
+    abs = db.session.query(Absen.id_absen, Absen.waktu_absen).filter(Absen.waktu_absen >= this_month).all()
+    # for id_jemaat, waktu_absen in abs:
+    #     data = {
+    #         "id_jemaat" : id_jemaat,
+    #         "waktu_absen" : waktu_absen
+    #     }
+    #     list_absen.append(data)
     
     weekly = get_all_sundays(year, month)
     count = [0] * len(weekly)
     for id_jemaat, waktu_absen in abs:
-        abs_date = datetime.strptime(waktu_absen, "%Y-%m-%dT%H:%M:%S.%fZ").date()
         for i in range(len(weekly)):
-            if abs_date <= weekly[i]:
+            if waktu_absen <= weekly[i]:
                 count[i]+=1
-                pass
+                break
     print(count)
-    return list_absen
+    data = {
+            "jumlah" : count,
+            "minggu" : weekly
+        }
+    return data
 
 def get_all_sundays(year, month):
-  """
-  This function finds all Sundays within a given month using the 
-  calendar module and list comprehension.
+    year = int(year)
+    month = int(month)
+    weekday, days_in_month = calendar.monthrange(year, month)
 
-  Args:
-      year: The year (e.g., 2024).
-      month: The month (1-12).
+    # Calculate offsets to reach all Sundays (considering wrapping)
+    offsets = range((6 - weekday) % 7 + 1, days_in_month + 1, 7)
 
-  Returns:
-      A list of datetime objects representing all Sundays of the month.
-  """
+    # Create a list of datetime objects for all Sundays using list comprehension
+    all_sundays = [datetime(year, month, day) for day in offsets]
 
-  # Get the weekday of the first day of the month (0-6)
-  weekday = calendar.monthrange(year, month)[0]
+    return all_sundays
 
-  # Calculate offsets to reach all Sundays (considering wrapping)
-  offsets = range((6 - weekday) % 7, calendar.monthrange(year, month)[1], 7)
 
-  # Create a list of datetime objects for all Sundays using list comprehension
-  all_sundays = [datetime(year, month, day) for day in offsets]
 
-  return all_sundays
 # Test
 # print(get_all_jemaat())
 # print(initiate_table()) #Success

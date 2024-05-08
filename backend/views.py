@@ -71,7 +71,9 @@ def get_recommendations():
 
 @views.route('/monthly-absent', methods=['POST'])
 def monthly_absent():
-    data = request.get_json()
-    date = data['tanggal']
+    if request.method == 'POST':
+        data = request.get_json()
+        year = data['year']
+        month = data['month']
     # date = "2024-05-01"
-    return jsonify(visualize_monthly_absen(date))
+    return jsonify(visualize_monthly_absen(year,month))
