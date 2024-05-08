@@ -568,17 +568,17 @@ def visualize_monthly_absen(year, month):
     return data
 
 def get_all_sundays(year, month):
-  year = int(year)
-  month = int(month)
-  weekday = calendar.monthrange(year, month)[0]
+    year = int(year)
+    month = int(month)
+    weekday, days_in_month = calendar.monthrange(year, month)
 
-  # Calculate offsets to reach all Sundays (considering wrapping)
-  offsets = range((6 - weekday) % 7, calendar.monthrange(year, month)[1], 7)
+    # Calculate offsets to reach all Sundays (considering wrapping)
+    offsets = range((6 - weekday) % 7 + 1, days_in_month + 1, 7)
 
-  # Create a list of datetime objects for all Sundays using list comprehension
-  all_sundays = [datetime(year, month, day) for day in offsets]
+    # Create a list of datetime objects for all Sundays using list comprehension
+    all_sundays = [datetime(year, month, day) for day in offsets]
 
-  return all_sundays
+    return all_sundays
 
 
 
