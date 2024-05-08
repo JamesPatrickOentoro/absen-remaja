@@ -53,7 +53,7 @@ export default {
     methods: {
         async fetchRecommendations() {
             try {
-                const response = await axios.get('http://127.0.0.1:5000/student/recommendations');
+                const response = await axios.get('absen/student/recommendations');
                 this.recommendations = response.data;
             } catch (error) {
                 console.error('Error fetching data', error);
@@ -62,7 +62,7 @@ export default {
         loginStudent() {
             console.log(this.selectedId)
             if (this.selectedId !== null) {
-                axios.post('http://127.0.0.1:5000/student/login', {id_jemaat: this.selectedId })
+                axios.post('absen/student/login', {id_jemaat: this.selectedId })
                     .then(response => {
                         // Handle the response as needed
                         console.log(this.selectedId)
