@@ -68,3 +68,10 @@ def get_recommendations():
     selected_keys = ['nama', 'id_jemaat']
     result_list = [{key: user[key] for key in selected_keys} for user in data]
     return jsonify(result_list)
+
+@views.route('/monthly-absent', methods=['POST'])
+def monthly_absent():
+    data = request.get_json()
+    date = data['tanggal']
+    # date = "2024-05-01"
+    return jsonify(visualize_monthly_absen(date))
