@@ -2,7 +2,7 @@
 # from flask_sqlalchemy import SQLAlchemy
 # from flask_cors import CORS
 print("Before importing pandas")
-from datetime import datetime
+from datetime import datetime, timedelta
 import pandas as pd
 # from werkzeug.security import check_password_hash
 from . import db
@@ -110,7 +110,7 @@ def add_dummy_data():
         
 def add_jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status):
     # with app.app_context():
-    new_jemaat = Jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status)
+    new_jemaat = Jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, datetime.now())
     db.session.add(new_jemaat)
     db.session.commit()
     return {
@@ -166,8 +166,8 @@ def login_admin(input_nama_admin, input_password):
 def get_all_jemaat():
     # with app.app_context():
     jemaat = []
-    inv = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.no_telp, Jemaat.email, Jemaat.gender, Jemaat.hobi, Jemaat.sekolah, Jemaat.temp_lahir, Jemaat.tgl_lahir, Jemaat.no_telp_ortu, Jemaat.kelas, Jemaat.daerah, Jemaat.kecamatan, Jemaat.alamat, Jemaat.foto, Jemaat.status).all()
-    for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status in inv:
+    inv = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.no_telp, Jemaat.email, Jemaat.gender, Jemaat.hobi, Jemaat.sekolah, Jemaat.temp_lahir, Jemaat.tgl_lahir, Jemaat.no_telp_ortu, Jemaat.kelas, Jemaat.daerah, Jemaat.kecamatan, Jemaat.alamat, Jemaat.foto, Jemaat.status, Jemaat.tgl_daftar).all()
+    for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, tgl_daftar in inv:
         data = {
             'id_jemaat' : id_jemaat, 
             'nama' : nama, 
@@ -184,7 +184,8 @@ def get_all_jemaat():
             'kecamatan' : kecamatan, 
             'alamat' : alamat, 
             'foto' : foto,
-            'status' : status
+            'status' : status,
+            'tgl_daftar':tgl_daftar
         }
         jemaat.append(data)
     return jemaat
@@ -192,9 +193,9 @@ def get_all_jemaat():
 # Cari Jemaat Dengan ID
 def get_jemaat_by_id(id):
     # with app.app_context():
-    jmt = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.no_telp, Jemaat.email, Jemaat.gender, Jemaat.hobi, Jemaat.sekolah, Jemaat.temp_lahir, Jemaat.tgl_lahir, Jemaat.no_telp_ortu, Jemaat.kelas, Jemaat.daerah, Jemaat.kecamatan, Jemaat.alamat, Jemaat.foto, Jemaat.status).filter(Jemaat.id_jemaat == id)
+    jmt = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.no_telp, Jemaat.email, Jemaat.gender, Jemaat.hobi, Jemaat.sekolah, Jemaat.temp_lahir, Jemaat.tgl_lahir, Jemaat.no_telp_ortu, Jemaat.kelas, Jemaat.daerah, Jemaat.kecamatan, Jemaat.alamat, Jemaat.foto, Jemaat.status, Jemaat.tgl_daftar).filter(Jemaat.id_jemaat == id)
     list_jemaat = []
-    for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status in jmt:
+    for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, tgl_daftar in jmt:
         data = {
             'id_jemaat' : id_jemaat, 
             'nama' : nama, 
@@ -211,7 +212,8 @@ def get_jemaat_by_id(id):
             'kecamatan' : kecamatan, 
             'alamat' : alamat, 
             'foto' : foto,
-            'status' : status
+            'status' : status,
+            'tgl_daftar':tgl_daftar
         }
         list_jemaat.append(data)
     return list_jemaat
@@ -219,8 +221,8 @@ def get_jemaat_by_id(id):
 # Cari jemaat dengan huruf awal
 def get_jemaat_by_name(name):
     list_jemaat = []
-    jmt = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.no_telp, Jemaat.email, Jemaat.gender, Jemaat.hobi, Jemaat.sekolah, Jemaat.temp_lahir, Jemaat.tgl_lahir, Jemaat.no_telp_ortu, Jemaat.kelas, Jemaat.daerah, Jemaat.kecamatan, Jemaat.alamat, Jemaat.foto, Jemaat.status).filter(Jemaat.nama.startswith(name)).all()
-    for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status in jmt:
+    jmt = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.no_telp, Jemaat.email, Jemaat.gender, Jemaat.hobi, Jemaat.sekolah, Jemaat.temp_lahir, Jemaat.tgl_lahir, Jemaat.no_telp_ortu, Jemaat.kelas, Jemaat.daerah, Jemaat.kecamatan, Jemaat.alamat, Jemaat.foto, Jemaat.status, Jemaat.tgl_daftar).filter(Jemaat.nama.startswith(name)).all()
+    for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, tgl_daftar in jmt:
         data = {
             'id_jemaat' : id_jemaat, 
             'nama' : nama, 
@@ -237,7 +239,8 @@ def get_jemaat_by_name(name):
             'kecamatan' : kecamatan, 
             'alamat' : alamat, 
             'foto' : foto,
-            'status' : status
+            'status' : status,
+            'tgl_daftar': tgl_daftar
         }
         list_jemaat.append(data)
     return list_jemaat
@@ -245,8 +248,8 @@ def get_jemaat_by_name(name):
 # Cari jemaat dengan status
 def get_absen_by_status(status):
     list_jemaat = []
-    jmt = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.no_telp, Jemaat.email, Jemaat.gender, Jemaat.hobi, Jemaat.sekolah, Jemaat.temp_lahir, Jemaat.tgl_lahir, Jemaat.no_telp_ortu, Jemaat.kelas, Jemaat.daerah, Jemaat.kecamatan, Jemaat.alamat, Jemaat.foto, Jemaat.status).filter(Jemaat.status == status)
-    for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status in jmt:
+    jmt = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.no_telp, Jemaat.email, Jemaat.gender, Jemaat.hobi, Jemaat.sekolah, Jemaat.temp_lahir, Jemaat.tgl_lahir, Jemaat.no_telp_ortu, Jemaat.kelas, Jemaat.daerah, Jemaat.kecamatan, Jemaat.alamat, Jemaat.foto, Jemaat.status, Jemaat.tgl_daftar).filter(Jemaat.status == status)
+    for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, tgl_daftar in jmt:
         data = {
             'id_jemaat' : id_jemaat, 
             'nama' : nama, 
@@ -263,78 +266,27 @@ def get_absen_by_status(status):
             'kecamatan' : kecamatan, 
             'alamat' : alamat, 
             'foto' : foto,
-            'status' : status
+            'status' : status,
+            'tgl_daftar':tgl_daftar
         }
         list_jemaat.append(data)
     return list_jemaat
-
-# Ambil Semua Absen
-    with app.app_context():
-        jmt = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.no_telp, Jemaat.email, Jemaat.gender, Jemaat.hobi, Jemaat.sekolah, Jemaat.temp_lahir, Jemaat.tgl_lahir, Jemaat.no_telp_ortu, Jemaat.kelas, Jemaat.daerah, Jemaat.kecamatan, Jemaat.alamat, Jemaat.foto, Jemaat.status).filter(Jemaat.id_jemaat == id)
-        list_jemaat = []
-        for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status in jmt:
-            data = {
-                'id_jemaat' : id_jemaat, 
-                'nama' : nama, 
-                'no_telp' : no_telp, 
-                'email' : email, 
-                'gender' : gender, 
-                'hobi' : hobi, 
-                'sekolah' : sekolah, 
-                'temp_lahir' : temp_lahir, 
-                'tgl_lahir' : tgl_lahir, 
-                'no_telp_ortu' : no_telp_ortu, 
-                'kelas' : kelas, 
-                'daerah' : daerah, 
-                'kecamatan' : kecamatan, 
-                'alamat' : alamat, 
-                'foto' : foto,
-                'status' : status
-            }
-            list_jemaat.append(data)
-        return list_jemaat
-    
-def get_all_absen():
-    # with app.app_context():
-    abs = db.session.query(Absen.id_jemaat, Jemaat.nama, Jemaat.status, Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).all()
-    list_absen = []
-    for id_jemaat, nama, status, waktu_absen in abs:
-        data = {
-            "id_jemaat" : id_jemaat,
-            "nama":nama,
-            "status" : status,
-            "waktu_absen" : waktu_absen
-        }
-        list_absen.append(data)
-    return list_absen
         
-    # with app.app_context():
-    abs = db.session.query(Absen.id_jemaat, Jemaat.nama, Jemaat.status, Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).all()
-    list_absen = []
-    for id_jemaat,nama, status, waktu_absen in abs:
-        data = {
-            "id_jemaat" : id_jemaat,
-            "nama":nama,
-            "status" : status,
-            "waktu_absen" : waktu_absen
-        }
-        list_absen.append(data)
-    return list_absen
 
-# Cari Absen Dengan Tanggal
-def get_absen_by_date(start_date, end_date):
-    # with app.app_context():
-    abs = db.session.query(Absen.id_jemaat, Jemaat.nama, Jemaat.status, Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).filter(Absen.waktu_absen.between(start_date,end_date)).all()
-    list_absen = []
-    for id_jemaat, nama, status, waktu_absen in abs:
-        data = {
-            "id_jemaat" : id_jemaat,
-            "nama":nama,
-            "status" : status,
-            "waktu_absen" : waktu_absen
-        }
-        list_absen.append(data)
-    return list_absen
+# # Cari Absen Dengan Tanggal
+# def get_absen_by_date(start_date, end_date):
+#     # with app.app_context():
+#     abs = db.session.query(Absen.id_jemaat, Jemaat.nama, Jemaat.status, Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).filter(Absen.waktu_absen.between(start_date,end_date)).all()
+#     list_absen = []
+#     for id_jemaat, nama, status, waktu_absen in abs:
+#         data = {
+#             "id_jemaat" : id_jemaat,
+#             "nama":nama,
+#             "status" : status,
+#             "waktu_absen" : waktu_absen
+#         }
+#         list_absen.append(data)
+#     return list_absen
 
 # Cari absen dengan huruf awal
 def get_absen_by_name(name):
@@ -350,24 +302,24 @@ def get_absen_by_name(name):
         list_absen.append(data)
 
 # Cari Absen Dengan ID Jemaat
-def get_absen_by_id(id_jmt):
-    # with app.app_context():
-    abs = db.session.query(Absen.id_jemaat, Jemaat.nama, Jemaat.status, Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).filter(Absen.id_jemaat == id_jmt).all()
-    list_absen = []
-    for id_jemaat, nama, status, waktu_absen in abs:
-        data = {
-            "id_jemaat" : id_jemaat,
-            "nama":nama,
-            "status" : status,
-            "waktu_absen" : waktu_absen
-        }
-        list_absen.append(data)
-    return list_absen
+# def get_absen_by_id(id_jmt):
+#     # with app.app_context():
+#     abs = db.session.query(Absen.id_jemaat, Jemaat.nama, Jemaat.status, Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).filter(Absen.id_jemaat == id_jmt).all()
+#     list_absen = []
+#     for id_jemaat, nama, status, waktu_absen in abs:
+#         data = {
+#             "id_jemaat" : id_jemaat,
+#             "nama":nama,
+#             "status" : status,
+#             "waktu_absen" : waktu_absen
+#         }
+#         list_absen.append(data)
+#     return list_absen
     
 # Edit Data Jemaat #COBA
 def edit_data_jemaat(id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status):
     # with app.app_context():
-    jemaat = db.session.query(Jemaat).filter_by(id_jemaat == id_jemaat).first()
+    jemaat = db.session.query(Jemaat).filter(Jemaat.id_jemaat == id_jemaat).first()
     try:
         jemaat.nama = nama
         jemaat.no_telp = no_telp
@@ -424,10 +376,10 @@ def migrate_data(file_name):
 
 
 # Cari jemaat dengan status
-def get_absen_by_status(status):
+def get_jemaat_by_status(status):
     list_jemaat = []
-    jmt = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.no_telp, Jemaat.email, Jemaat.gender, Jemaat.hobi, Jemaat.sekolah, Jemaat.temp_lahir, Jemaat.tgl_lahir, Jemaat.no_telp_ortu, Jemaat.kelas, Jemaat.daerah, Jemaat.kecamatan, Jemaat.alamat, Jemaat.foto, Jemaat.status).filter(Jemaat.status == status)
-    for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status in jmt:
+    jmt = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.no_telp, Jemaat.email, Jemaat.gender, Jemaat.hobi, Jemaat.sekolah, Jemaat.temp_lahir, Jemaat.tgl_lahir, Jemaat.no_telp_ortu, Jemaat.kelas, Jemaat.daerah, Jemaat.kecamatan, Jemaat.alamat, Jemaat.foto, Jemaat.status, Jemaat.tgl_daftar).filter(Jemaat.status == status).all()
+    for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, tgl_daftar in jmt:
         data = {
             'id_jemaat' : id_jemaat, 
             'nama' : nama, 
@@ -444,7 +396,8 @@ def get_absen_by_status(status):
             'kecamatan' : kecamatan, 
             'alamat' : alamat, 
             'foto' : foto,
-            'status' : status
+            'status' : status,
+            'tgl_daftar' : tgl_daftar
         }
         list_jemaat.append(data)
     return list_jemaat
@@ -502,44 +455,44 @@ def get_absen_by_date(date):
         list_absen.append(data)
     return list_absen
     
-# Cari Absen Dengan ID Jemaat
-def get_absen_by_id(id_jmt):
-    # with app.app_context():
-    abs = db.session.query(Absen.id_jemaat, Absen.waktu_absen).filter(Absen.id_jemaat == id_jmt).all()
-    list_absen = []
-    for id_jemaat, waktu_absen in abs:
-        data = {
-            "id_jemaat" : id_jemaat,
-            "waktu_absen" : waktu_absen
-        }
-        list_absen.append(data)
-    return list_absen
+# # Cari Absen Dengan ID Jemaat
+# def get_absen_by_id(id_jmt):
+#     # with app.app_context():
+#     abs = db.session.query(Absen.id_jemaat, Absen.waktu_absen).filter(Absen.id_jemaat == id_jmt).all()
+#     list_absen = []
+#     for id_jemaat, waktu_absen in abs:
+#         data = {
+#             "id_jemaat" : id_jemaat,
+#             "waktu_absen" : waktu_absen
+#         }
+#         list_absen.append(data)
+#     return list_absen
     
 # Cari absen dengan huruf awal
-def get_absen_by_name(name):
-    list_absen = []
-    jmt = db.session.query(Absen.id_absen, Absen.waktu_absen).join(Jemaat, Jemaat.id_jemaat == Absen.id_jemaat).filter(Jemaat.nama.startswith(name)).all()
-    for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status in jmt:
-        data = {
-            'id_jemaat' : id_jemaat, 
-            'nama' : nama, 
-            'no_telp' : no_telp, 
-            'email' : email, 
-            'gender' : gender, 
-            'hobi' : hobi, 
-            'sekolah' : sekolah, 
-            'temp_lahir' : temp_lahir, 
-            'tgl_lahir' : tgl_lahir, 
-            'no_telp_ortu' : no_telp_ortu, 
-            'kelas' : kelas, 
-            'daerah' : daerah, 
-            'kecamatan' : kecamatan, 
-            'alamat' : alamat, 
-            'foto' : foto,
-            'status' : status
-        }
-        list_absen.append(data)
-    return list_absen
+# def get_absen_by_name(name):
+#     list_absen = []
+#     jmt = db.session.query(Absen.id_absen, Absen.waktu_absen).join(Jemaat, Jemaat.id_jemaat == Absen.id_jemaat).filter(Jemaat.nama.startswith(name)).all()
+#     for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status in jmt:
+#         data = {
+#             'id_jemaat' : id_jemaat, 
+#             'nama' : nama, 
+#             'no_telp' : no_telp, 
+#             'email' : email, 
+#             'gender' : gender, 
+#             'hobi' : hobi, 
+#             'sekolah' : sekolah, 
+#             'temp_lahir' : temp_lahir, 
+#             'tgl_lahir' : tgl_lahir, 
+#             'no_telp_ortu' : no_telp_ortu, 
+#             'kelas' : kelas, 
+#             'daerah' : daerah, 
+#             'kecamatan' : kecamatan, 
+#             'alamat' : alamat, 
+#             'foto' : foto,
+#             'status' : status
+#         }
+#         list_absen.append(data)
+#     return list_absen
     
 def visualize_monthly_absen(year, month):
     # list_absen = []
@@ -580,8 +533,138 @@ def get_all_sundays(year, month):
 
     return all_sundays
 
+def get_birthday():
+    list_jemaat = [] 
+    today = datetime.now()
+    first_day_of_month = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    
+    # Get the last day of the current month by adding one month to the first day of the current month
+    # and subtracting one day
+    last_day_of_month = (first_day_of_month.replace(month=first_day_of_month.month % 12 + 1, 
+                                                    year=first_day_of_month.year + first_day_of_month.month // 12) 
+                                                    - timedelta(days=1)).replace(hour=23, minute=59, second=59, microsecond=999999)
+    print(first_day_of_month, last_day_of_month)
+    abs = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.tgl_lahir).all()
+    last_week_end = today - timedelta(days=today.weekday() + 1)
+    for id,nama,tgl in abs:
+        if tgl.month == today.month:
+            if tgl.day >= last_week_end.day and tgl.day <= today.day:
+                data = {
+                    'id': id,
+                    'nama': nama,
+                    'tanggal': tgl
+                }
+                list_jemaat.append(data)
+    return list_jemaat
 
+def get_all_jemaat():
+    list_jemaat = []
+    jemaat = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.no_telp, Jemaat.email, Jemaat.gender, Jemaat.hobi, Jemaat.sekolah, Jemaat.temp_lahir, Jemaat.tgl_lahir, Jemaat.no_telp_ortu, Jemaat.kelas, Jemaat.daerah, Jemaat.kecamatan, Jemaat.alamat, Jemaat.foto, Jemaat.status, Jemaat.tgl_daftar).all()
+    for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, tgl_daftar in jmt:
+        data = {
+            'id_jemaat' : id_jemaat, 
+            'nama' : nama, 
+            'no_telp' : no_telp, 
+            'email' : email, 
+            'gender' : gender, 
+            'hobi' : hobi, 
+            'sekolah' : sekolah, 
+            'temp_lahir' : temp_lahir, 
+            'tgl_lahir' : tgl_lahir, 
+            'no_telp_ortu' : no_telp_ortu, 
+            'kelas' : kelas, 
+            'daerah' : daerah, 
+            'kecamatan' : kecamatan, 
+            'alamat' : alamat, 
+            'foto' : foto,
+            'status' : status,
+            'tgl_daftar' : tgl_daftar
+        }
+        list_jemaat.append(data)
+    return list_jemaat
 
+# def get_all_active_jemaat():
+#     all_active_jemaat = []
+#     jemaat = db.session.query(Jemaat.id_jemaat, Jemaat.nama).filter(Jemaat.status == 'active').all()
+#     for id,nama in jemaat:
+#         data = {
+#             'id':id,
+#             'nama':nama
+#         }
+#         all_active_jemaat.append(data)
+#     return all_active_jemaat
+
+def get_all_absent_today():
+    absen_jemaat = []
+    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    abs = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).filter(Jemaat.status == 'active').filter(Absen.waktu_absen >= today).all()
+    for id, nama, waktu in abs:
+        data = {
+            'id':id,
+            'nama':nama,
+            'waktu_absen':waktu
+        }
+        absen_jemaat.append(data)
+    return absen_jemaat
+
+def get_attendance():
+    count_active_jemaat = len(get_jemaat_by_status('active'))
+    absen_jemaat_today = len(get_all_absent_today())
+    absent = count_active_jemaat - absen_jemaat_today
+    data = {
+        'attended' : absen_jemaat_today,
+        'absent' : absent
+    }
+    return data
+
+def add_academic_year():
+    jemaats = db.session.query(Jemaat).filter(Jemaat.status == 'active').all()
+    for jemaat in jemaats:
+        jemaat.kelas += 1
+        if jemaat.kelas > 12:
+            jemaat.status = 'inactive'
+    db.session.commit()
+    return {'status':'success'}
+
+def get_new_commers():
+    new_commers = []
+    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    jemaats = db.session.query(Jemaat.id_jemaat,Jemaat.nama,Jemaat.tgl_daftar).filter(Jemaat.status == 'active').filter(Jemaat.tgl_daftar >= today).all()
+    for id, nama, tanggal in jemaats:
+        data = {
+            'id':id,
+            'nama':nama,
+            'tanggal':tanggal
+        }
+        new_commers.append(data)
+    return new_commers
+
+def get_absent_more_three():
+    absent = []
+    today = datetime.today()
+    three_weeks_ago = today - timedelta(weeks=3)
+    print(three_weeks_ago)
+    three_weeks_ago_start_of_day = three_weeks_ago.replace(hour=0, minute=0, second=0, microsecond=0)
+    jemaats = db.session.query(Jemaat.id_jemaat,Jemaat.nama,Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).filter(Absen.waktu_absen < three_weeks_ago_start_of_day).filter(Jemaat.status == 'active').all()
+    latest_absen = {}
+
+    # Iterate over the results and update the dictionary with the latest waktu_absen for each id_jemaat
+    for id_jemaat, nama, waktu_absen in jemaats:
+        if id_jemaat not in latest_absen or waktu_absen > latest_absen[id_jemaat]:
+            latest_absen[id_jemaat] = waktu_absen
+
+    # Filter the results to include only the rows with the latest waktu_absen for each id_jemaat
+    filtered_jemaats = [(id_jemaat, nama, waktu_absen) for id_jemaat, nama, waktu_absen in jemaats if waktu_absen == latest_absen[id_jemaat]]
+
+    # Print the filtered results
+    for id_jemaat, nama, waktu_absen in filtered_jemaats:
+        data = {
+            'id':id_jemaat,
+            'nama':nama,
+            'waktu_absen':waktu_absen
+        }
+        absent.append(data)
+    return absent
 # Test
 # print(get_all_jemaat())
 # print(initiate_table()) #Success
