@@ -69,6 +69,29 @@ def get_recommendations():
     result_list = [{key: user[key] for key in selected_keys} for user in data]
     return jsonify(result_list)
 
+@views.route('/all-students', methods=['GET'])
+def get_all_students():
+    data = get_all_jemaat()
+    print(data)
+    selected_keys = ['id_jemaat' , 
+            'nama', 
+            'no_telp', 
+            'email', 
+            'gender', 
+            'hobi', 
+            'sekolah', 
+            'temp_lahir', 
+            'tgl_lahir', 
+            'no_telp_ortu', 
+            'kelas' ,
+            'daerah' , 
+            'kecamatan', 
+            'alamat' , 
+            'foto' ,
+            'status']
+    result_list = [{key: user[key] for key in selected_keys} for user in data]
+    return jsonify(result_list)
+
 @views.route('/monthly-absent', methods=['POST'])
 def monthly_absent():
     if request.method == 'POST':

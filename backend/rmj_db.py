@@ -367,7 +367,7 @@ def get_absen_by_id(id_jmt):
 # Edit Data Jemaat #COBA
 def edit_data_jemaat(id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status):
     # with app.app_context():
-    jemaat = db.session.query(Jemaat).filter_by(id_jemaat == id_jemaat).first()
+    jemaat = db.session.query(Jemaat).filter(Jemaat.id_jemaat == id_jemaat).first()
     try:
         jemaat.nama = nama
         jemaat.no_telp = no_telp
