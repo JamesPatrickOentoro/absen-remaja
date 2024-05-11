@@ -1,60 +1,139 @@
-<template>
+<!-- <template>
     <div>
         <h2>All Students</h2>
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Date of Birth</th>
-                    <th>Class</th>
-                    <th>Phone Number</th>
-                    <th>Gender</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="(student, index) in students" :key="index">
-                    <td>{{ student.nama }}</td>
-                    <td>{{ formatDate(student.tgl_lahir) }}</td>
-                    <td>{{ student.kelas }}</td>
-                    <td>{{ student.no_telp }}</td>
-                    <td>{{ student.gender }}</td>
-                    <td>
-                        <button @click="editStudent(student)">
-                            <i class="bi bi-pencil-square"></i> <!-- Edit icon -->
-                        </button>
-                        <button @click="deleteStudent">
-                            <i class="bi bi-trash"></i><!-- Delete icon -->
-                        </button>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="table-responsive">
+            <table class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Name</th>
+                        <th>Date of Birth</th>
+                        <th>Class</th>
+                        <th>Phone Number</th>
+                        <th>Gender</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="(student, index) in students" :key="index">
+                        <td>{{ student.nama }}</td>
+                        <td>{{ formatDate(student.tgl_lahir) }}</td>
+                        <td>{{ student.kelas }}</td>
+                        <td>{{ student.no_telp }}</td>
+                        <td>{{ student.gender }}</td>
+                        <td>
+                            <button @click="editStudent(student)" class="btn btn-primary">
+                                <i class="bi bi-pencil-square"></i> 
+                            </button>
+                            <button @click="deleteStudent(student.id_jemaat)" class="btn btn-danger">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
         <div v-if="showEditModal" class="modalform">
             <div class="modal-content-section">
                 <span class="close" @click="closeEditModal">&times;</span>
                 <h2>Edit Student</h2>
-                <!-- Edit form -->
+                
+
                 <form @submit.prevent="submitEditForm">
-                    <label for="edit-name">Name:</label>
-                    <input type="text" id="edit-name" v-model="editedStudent.nama" placeholder="Enter name">
-                    <label for="edit-birth">Date of Birth:</label>
-                    <input type="text" id="edit-birth" v-model="editedStudent.tgl_lahir"
-                        placeholder="Enter date of birth">
-                    <label for="edit-email">email:</label>
-                    <input type="email" id="email" v-model="editedStudent.email"
-                        placeholder="Enter email">
-                    <label for="edit-hobby">hobby:</label>
-                    <input type="text" id="hobby" v-model="editedStudent.hobi"
-                        placeholder="Enter hobby">
-                    <!-- Repeat similar structure for other fields -->
-                    <button type="submit">Save</button>
+                    <div class="form-group">
+                        <label for="edit-name">Name:</label>
+                        <input type="text" id="edit-name" v-model="editedStudent.nama" class="form-control" placeholder="Enter name">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-birth">Date of Birth:</label>
+                        <input type="text" id="edit-birth" v-model="editedStudent.tgl_lahir" class="form-control" placeholder="Enter date of birth">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-email">Email:</label>
+                        <input type="email" id="email" v-model="editedStudent.email" class="form-control" placeholder="Enter email">
+                    </div>
+                    <div class="form-group">
+                        <label for="edit-hobby">Hobby:</label>
+                        <input type="text" id="hobby" v-model="editedStudent.hobi" class="form-control" placeholder="Enter hobby">
+                    </div>
+                    <button type="submit" class="btn btn-success">Save</button>
                 </form>
             </div>
         </div>
+    </div>
+</template> -->
+<template>
+    <div class="container-fluid">
+        <div class="attend">
+            <h3>Attendance</h3>
 
+            <div class="table-container">
+                <div class="table-responsive">
+                    <table class="table table-hover table-sticky">
+                        <thead style="position: sticky;top:0;background: #ccc;">
+                            <tr>
+                                <th scope="col">Student Name</th>
+                                <th scope="col">Birthdate</th>
+                                <th scope="col">Class</th>
+                                <th scope="col">Phone</th>
+                                <th scope="col">Gender</th>
+                                <th scope="col">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr v-for="(student, index) in students" :key="index">
+                                <td>{{ student.nama }}</td>
+                                <td>{{ formatDate(student.tgl_lahir) }}</td>
+                                <td>{{ student.kelas }}</td>
+                                <td>{{ student.no_telp }}</td>
+                                <td>{{ student.gender }}</td>
+                                <td>
+                                    <button @click="editStudent(student)" class="btn btn-primary">
+                                        <i class="bi bi-pencil-square"></i>
+                                    </button>
+                                    <button @click="deleteStudent(student.id_jemaat)" class="btn btn-danger">
+                                        <i class="bi bi-trash"></i>
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div v-if="showEditModal" class="modalform">
+                    <div class="modal-content-section">
+                        <span class="close" @click="closeEditModal">&times;</span>
+                        <h2>Edit Student</h2>
+
+
+                        <form @submit.prevent="submitEditForm">
+                            <div class="form-group">
+                                <label for="edit-name">Name:</label>
+                                <input type="text" id="edit-name" v-model="editedStudent.nama" class="form-control"
+                                    placeholder="Enter name">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-birth">Date of Birth:</label>
+                                <input type="text" id="edit-birth" v-model="editedStudent.tgl_lahir"
+                                    class="form-control" placeholder="Enter date of birth">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-email">Email:</label>
+                                <input type="email" id="email" v-model="editedStudent.email" class="form-control"
+                                    placeholder="Enter email">
+                            </div>
+                            <div class="form-group">
+                                <label for="edit-hobby">Hobby:</label>
+                                <input type="text" id="hobby" v-model="editedStudent.hobi" class="form-control"
+                                    placeholder="Enter hobby">
+                            </div>
+                            <button type="submit" class="btn btn-success">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </template>
+
 
 <script>
 import axios from 'axios';
@@ -69,11 +148,11 @@ export default {
             phone: '',
             gender: '',
             class: '',
-            email:'',
+            email: '',
             school: '',
-            birth_place:'',
-            no_telp_ortu:'',
-            daerah:'',
+            birth_place: '',
+            no_telp_ortu: '',
+            daerah: '',
             kecamatan: '',
             foto: 'nanana',
             status: '',
@@ -136,6 +215,10 @@ export default {
             const year = date.getFullYear();
             return `${day}-${month}-${year}`;
         },
+        closeEditModal() {
+            // Close edit modal
+            this.showEditModal = false;
+        },
         editStudent(student) {
             // Set edited student data and show edit modal
             console.log('edit student msuk');
@@ -196,7 +279,18 @@ export default {
                     console.error('Error updating student data:', error);
                     // Optionally, display an error message to the user
                 });
-        },
+        }, deleteStudent(studentId) {
+            // Send a DELETE request to delete the student by id_jemaat
+            axios.delete(`absen/delete-jemaat?id_jemaat=${studentId}`)
+                .then(() => {
+                    // If deletion is successful, remove the student from the UI
+                    this.students = this.students.filter(student => student.id_jemaat !== studentId);
+                })
+                .catch(error => {
+                    console.error('Error deleting student:', error);
+                    // Optionally, display an error message to the user
+                });
+        }
     },
 };
 </script>

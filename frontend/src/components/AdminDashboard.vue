@@ -1,20 +1,53 @@
 <template>
-    <div class="card">
-        <div class="card-content">
-            <select v-model="selectedYear" class="select">
-                <option disabled selected value="">Year</option>
-                <option v-for="year in years" :key="year">{{ year }}</option>
-            </select>
-            <select v-model="selectedMonth" class="select" >
-                <option disabled selected value=""> Month</option>
-                <option v-for="(month, index) in months" :key="month" :value="index + 1">{{ month }}</option>
-            </select>
-            <button @click="fetchMonthlyAbsentData" class="button">generate</button>
+    <div class="contain">
+        <!-- Dashboard card for Absent -->
+        <div class="card-absent">
+            <div class="card-content-absent">
+                <h2>Absent</h2>
+                <p>{{ absent }}</p>
+            </div>
         </div>
-        <div class="card-chart">
-            <canvas id="barChart" width="400" height="300"></canvas>
+
+        <!-- Dashboard card for Attended -->
+        <div class="card-absent">
+            <div class="card-content-absent">
+                <h2>Attended</h2>
+                <p>{{ attended }}</p>
+            </div>
         </div>
     </div>
+
+    <div class="other-contain">
+        <div class="card">
+            <div class="card-content">
+                <select v-model="selectedYear" class="select">
+                    <option disabled selected value="">Year</option>
+                    <option v-for="year in years" :key="year">{{ year }}</option>
+                </select>
+                <select v-model="selectedMonth" class="select">
+                    <option disabled selected value="">Month</option>
+                    <option v-for="(month, index) in months" :key="month" :value="index + 1">{{ month }}</option>
+                </select>
+                <button @click="fetchMonthlyAbsentData" class="button">Generate</button>
+            </div>
+            <div class="card-chart">
+                <canvas id="barChart" width="400" height="300"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="new-comer-container">
+        <h2 style="position: sticky;">New Commers</h2>
+        <div class="new-comer-content">
+            <div class="new-comer-elements">
+                <div v-for="newComer in newCommers" :key="newComer.id" class="new-comer-card">
+                    <p>{{ newComer.nama }} </p>
+                    <p>{{ newComer.tanggal }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </template>
 
 <script>
@@ -29,6 +62,8 @@ export default {
             years: ['2022', '2023', '2024'], // Add years as needed
             months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             chart: null,
+            absent: 0,
+            attended: 0,
             chartData: {
                 type: 'bar',
                 labels: [],
@@ -39,12 +74,15 @@ export default {
                     // borderColor: 'rgba(54, 162, 235, 1)',
                     // borderWidth: 1
                 }]
-            } // Variable to store the chart instance
+            }, // Variable to store the chart instance
+            newCommers: []
         };
     },
     mounted() {
         // Render an empty chart on component mount
         this.renderChart([], []);
+        this.fetchTodayAttendance();
+        this.fetchNewCommers();
     },
     methods: {
         fetchMonthlyAbsentData() {
@@ -102,28 +140,100 @@ export default {
                     }
                 }
             });
+        },
+        fetchTodayAttendance() {
+            axios.post('absen/today-attendance')
+                .then(response => {
+                    this.absent = response.data.absent;
+                    this.attended = response.data.attended;
+                })
+                .catch(error => {
+                    console.error('Error fetching today attendance:', error);
+                });
+        },
+        fetchNewCommers() {
+            axios.post('absen/new-commers')
+                .then(response => {
+                    this.newCommers = response.data;
+                    console.log(this.newCommers);
+                })
+                .catch(error => {
+                    console.error('Error fetching new commers:', error);
+                });
         }
+
     }
 };
+
 </script>
 <style>
-.card {
+.contain {
+    /* display: flex; */
+    /* flex-wrap: wrap; Allow cards to wrap to the next line */
+    gap: 6px;
+    /* Add some space between cards */
+}
+
+.other-contain {
+    margin-left: 20px
+}
+
+
+/* new commer  */
+.new-comer-container {
+    margin-left:20px;
+    max-height: 400px;
+    /* overflow-y: auto; */
+    /* max-height: 200px; */
+    border: 1px solid #ccc;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+
+.new-comer-content {
+    overflow-y: auto;
+    max-height: 300px;
+    /* border: 1px solid #ccc; */
+    /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
+    padding: 20px;
+}
+
+.new-comer-elements{
+    overflow-y : auto;
+}
+
+.new-comer-card {
+    margin-top: 10px;
     border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
     margin-bottom: 20px;
+    /* background-color: #f9f9f9; */
+}
+
+.new-comer-card p {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.card {
+    /* flex: 1;  */
+    /* border: 1px solid #ccc; */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
     background-color: #fff;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
+    /* padding:30px */
 }
 
 .card-content {
     display: flex;
     align-items: center;
     gap: 10px;
-    margin-bottom: 10px;
+    /* margin-bottom: 10px; */
+    padding: 20px
 }
 
 .select {
@@ -147,7 +257,34 @@ export default {
     background-color: #0056b3;
 }
 
+
 .card-chart {
     flex-grow: 1;
+    padding: 20px
+}
+
+.card-absent {
+    /* flex: 1; Take up equal space within the container */
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-bottom: 20px;
+    background-color: #fff;
+    height: 50%;
+}
+
+.card-content-absent {
+    text-align: left;
+}
+
+.card-absent h2 {
+    margin-bottom: 10px;
+}
+
+.card-absent p {
+    font-size: 32px;
+    font-weight: bold;
+    /* color: #007bff; */
 }
 </style>
