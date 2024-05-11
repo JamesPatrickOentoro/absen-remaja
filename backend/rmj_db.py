@@ -535,20 +535,17 @@ def get_all_sundays(year, month):
 
 def get_birthday():
     list_jemaat = [] 
-    today = datetime.now()
-    first_day_of_month = today.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
-    
-    # Get the last day of the current month by adding one month to the first day of the current month
-    # and subtracting one day
-    last_day_of_month = (first_day_of_month.replace(month=first_day_of_month.month % 12 + 1, 
-                                                    year=first_day_of_month.year + first_day_of_month.month // 12) 
-                                                    - timedelta(days=1)).replace(hour=23, minute=59, second=59, microsecond=999999)
-    print(first_day_of_month, last_day_of_month)
-    abs = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.tgl_lahir).all()
-    last_week_end = today - timedelta(days=today.weekday() + 1)
+    today = datetime.now().replace(hour=23, minute=59, second=59, microsecond=999999)
+    abs = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.tgl_lahir).filter(Jemaat.status == 'active').all()
+    print(abs)
+    last_week = today - timedelta(days=7)
     for id,nama,tgl in abs:
+        print('Masuk 1')
         if tgl.month == today.month:
-            if tgl.day >= last_week_end.day and tgl.day <= today.day:
+            print('Masuk 2')
+            print(tgl.day, last_week.day, tgl.day, today.day)
+            if tgl.day >= last_week.day and tgl.day <= today.day:
+                print('Masuk 3')
                 data = {
                     'id': id,
                     'nama': nama,
@@ -560,7 +557,7 @@ def get_birthday():
 def get_all_jemaat():
     list_jemaat = []
     jemaat = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.no_telp, Jemaat.email, Jemaat.gender, Jemaat.hobi, Jemaat.sekolah, Jemaat.temp_lahir, Jemaat.tgl_lahir, Jemaat.no_telp_ortu, Jemaat.kelas, Jemaat.daerah, Jemaat.kecamatan, Jemaat.alamat, Jemaat.foto, Jemaat.status, Jemaat.tgl_daftar).all()
-    for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, tgl_daftar in jmt:
+    for id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, tgl_daftar in jemaat:
         data = {
             'id_jemaat' : id_jemaat, 
             'nama' : nama, 
