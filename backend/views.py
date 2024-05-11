@@ -100,3 +100,23 @@ def monthly_absent():
         month = data['month']
     # date = "2024-05-01"
     return jsonify(visualize_monthly_absen(year,month))
+
+@views.route('/weekly-birthday', methods=['POST'])
+def weekly_birthday():
+    return jsonify(get_birthday())
+
+@views.route('/today-attendance', methods=['POST'])
+def today_attendance():
+    return jsonify(get_attendance())
+
+@views.route('/academic-year', methods=['POST'])
+def academic_year():
+    return jsonify(add_academic_year())
+
+@views.route('/new-commers', methods=['POST'])
+def new_commers():
+    return jsonify(get_new_commers())
+
+@views.route('/long-absent', methods=['POST'])
+def long_absent():
+    return jsonify(get_absent_more_three())
