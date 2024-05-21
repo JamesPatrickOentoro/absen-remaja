@@ -9,15 +9,6 @@ app = Flask(__name__)
 DB_NAME = "rmj_db"
 
 
-# def run_npm_serve():
-#     print("Running npm serve function...")
-#     current_dir = os.path.dirname(os.path.abspath('frontend'))
-#     frontend_dir = os.path.join(current_dir, 'absent-project','frontend')
-#     if not os.path.isdir(frontend_dir):
-#         print(f"Error: Directory '{frontend_dir}' not found.")
-#     os.chdir(frontend_dir)
-#     return os.system('npm run serve')
-
 def create_app():
     app = Flask(__name__)
     CORS(app)
@@ -37,14 +28,6 @@ def create_app():
     # create_database(app)
 
     return app
-
-# app = create_app()
-
-# def create_database(app):
-#     with app.app_context():
-#         if not path.exists('backend/' + DB_NAME):
-#             db.create_all()
-#             print('Database Created!')
             
 if __name__ == '__main__':
     # app = Flask(__name__)

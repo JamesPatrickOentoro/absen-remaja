@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, flash
 from .rmj_db import *
+from sqlalchemy import delete
 
 views = Blueprint('views', __name__)
 
@@ -69,6 +70,44 @@ def get_recommendations():
     result_list = [{key: user[key] for key in selected_keys} for user in data]
     return jsonify(result_list)
 
+@views.route('/all-students', methods=['GET'])
+def get_all_students():
+    data = get_all_jemaat()
+    print(data)
+    selected_keys = ['id_jemaat' , 
+            'nama', 
+            'no_telp', 
+            'email', 
+            'gender', 
+            'hobi', 
+            'sekolah', 
+            'temp_lahir', 
+            'tgl_lahir', 
+            'no_telp_ortu', 
+            'kelas' ,
+            'daerah' , 
+            'kecamatan', 
+            'alamat' , 
+            'foto' ,
+            'status']
+    result_list = [{key: user[key] for key in selected_keys} for user in data]
+    return jsonify(result_list)
+
+@views.route('/delete-jemaat', methods=['DELETE'])
+def delete_jemaat():
+    try:
+        # Get the id_jemaat from the request parameters
+        id_jemaat = request.args.get('id_jemaat')
+        if id_jemaat is None:
+            return jsonify({'message': 'id_jemaat parameter is required'})
+
+        # Call the delete_jemaat_by_id function to delete the Jemaat record
+        message = delete_jemaat_by_id(id_jemaat)
+
+        return jsonify({'message': message})
+    except Exception as e:
+        return jsonify({'message': str(e)})
+    
 @views.route('/monthly-absent', methods=['POST'])
 def monthly_absent():
     if request.method == 'POST':

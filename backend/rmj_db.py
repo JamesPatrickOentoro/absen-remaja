@@ -218,6 +218,23 @@ def get_jemaat_by_id(id):
         list_jemaat.append(data)
     return list_jemaat
     
+
+def delete_jemaat_by_id(id_jemaat):
+    try:
+        # Query to delete the Jemaat record by id_jemaat
+        db.session.query(Jemaat).filter_by(id_jemaat=id_jemaat).delete()
+        
+        # Commit the transaction
+        db.session.commit()
+        
+        # Return success message or handle as needed
+        return "Jemaat record deleted successfully."
+    except Exception as e:
+        # Rollback the transaction in case of error
+        db.session.rollback()
+        # Handle the error (e.g., log, return error message, etc.)
+        return f"Error deleting Jemaat record: {str(e)}"
+    
 # Cari jemaat dengan huruf awal
 def get_jemaat_by_name(name):
     list_jemaat = []
