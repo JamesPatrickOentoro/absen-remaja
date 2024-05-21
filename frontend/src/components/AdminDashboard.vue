@@ -42,11 +42,39 @@
             <div class="new-comer-elements">
                 <div v-for="newComer in newCommers" :key="newComer.id" class="new-comer-card">
                     <p>{{ newComer.nama }} </p>
-                    <p>{{ newComer.tanggal }}</p>
+                    <p>{{ formatDate(newComer.tanggal) }}</p>
                 </div>
             </div>
         </div>
     </div>
+
+    <div id="app">
+        <div class="new-comer-container">
+            <h2 style="position: sticky;">Absent Students</h2>
+            <div class="new-comer-content">
+                <div class="new-comer-elements">
+                    <div v-for="absentStudent in absentStudents" :key="absentStudent.id" class="new-comer-card">
+                        <p>{{ absentStudent.nama }}</p>
+                        <p>{{ formatDate(absentStudent.waktu_absen) }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="app">
+            <div class="new-comer-container">
+                <h2 style="position: sticky;">Birthdays</h2>
+                <div class="new-comer-content">
+                    <div class="new-comer-elements">
+                        <div v-for="birthday in studentBirthdays" :key="birthday.id" class="new-comer-card">
+                            <p>{{ birthday.nama }}</p>
+                            <p>{{ formatDate(birthday.tanggal) }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 
 </template>
 
@@ -75,7 +103,9 @@ export default {
                     // borderWidth: 1
                 }]
             }, // Variable to store the chart instance
-            newCommers: []
+            newCommers: [],
+            absentStudents: [],
+            studentBirthdays: [],
         };
     },
     mounted() {
@@ -83,7 +113,21 @@ export default {
         this.renderChart([], []);
         this.fetchTodayAttendance();
         this.fetchNewCommers();
+        this.fetchNewStudents();
+        this.fetchBirthdays();
+
+        // Panggil metode setiap 5 menit
+        this.interval = setInterval(() => {
+            this.fetchMonthlyAbsentData();
+            this.fetchTodayAttendance();
+            this.fetchNewCommers();
+        }, 300000); // 300000 milidetik = 5 menit
     },
+    unmounted() {
+        // Hapus interval saat komponen dihancurkan untuk mencegah kebocoran memori
+        clearInterval(this.interval);
+    },
+
     methods: {
         fetchMonthlyAbsentData() {
             const year = this.selectedYear;
@@ -160,10 +204,42 @@ export default {
                 .catch(error => {
                     console.error('Error fetching new commers:', error);
                 });
+        },
+        fetchNewStudents() {
+            axios.post('absen/long-absent').then(
+                response => {
+                    this.absentStudents = response.data;
+                    console.log(this.absentStudents)
+                })
+                .catch(
+                    error => {
+                        console.error('Error fetching absents', error);
+                    }
+                )
+        },
+        formatDate(dateString) {
+            const date = new Date(dateString);
+            const day = date.getDate().toString().padStart(2, '0');
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        },
+        fetchBirthdays() {
+            axios.post('absen/weekly-birthday').then(
+                response => {
+                    this.studentBirthdays = response.data;
+                    console.log(this.studentBirthdays)
+                })
+                .catch(
+                    error => {
+                        console.error('Error fetching birthdays', error);
+                    }
+                )
         }
-
-    }
+    },
 };
+
+
 
 </script>
 <style>
@@ -181,7 +257,7 @@ export default {
 
 /* new commer  */
 .new-comer-container {
-    margin-left:20px;
+    margin-left: 20px;
     max-height: 400px;
     /* overflow-y: auto; */
     /* max-height: 200px; */
@@ -198,8 +274,8 @@ export default {
     padding: 20px;
 }
 
-.new-comer-elements{
-    overflow-y : auto;
+.new-comer-elements {
+    overflow-y: auto;
 }
 
 .new-comer-card {
