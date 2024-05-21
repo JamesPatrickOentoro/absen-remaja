@@ -67,7 +67,7 @@
                     <div class="new-comer-elements">
                         <div v-for="birthday in studentBirthdays" :key="birthday.id" class="new-comer-card">
                             <p>{{ birthday.nama }}</p>
-                            <p>{{ formatDate(birthday.tanggal) }}</p>
+                            <p>{{ birthday.tanggal }}</p>
                         </div>
                     </div>
                 </div>
