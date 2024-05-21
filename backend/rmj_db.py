@@ -558,20 +558,23 @@ def get_birthday():
     if abs == None:
         return {'status' : 'failed'}
     last_week = today - timedelta(days=7)
-    for id,nama,tgl in abs:
-        print('Masuk 1')
-        if tgl.month == today.month:
-            print('Masuk 2')
-            print(tgl.day, last_week.day, tgl.day, today.day)
-            if tgl.day >= last_week.day and tgl.day <= today.day:
-                print('Masuk 3')
-                data = {
-                    'id': id,
-                    'nama': nama,
-                    'tanggal': tgl,
-                    'status' : 'success'
-                }
-                list_jemaat.append(data)
+    try:
+        for id,nama,tgl in abs:
+            print('Masuk 1')
+            if tgl.month == today.month:
+                print('Masuk 2')
+                print(tgl.day, last_week.day, tgl.day, today.day)
+                if tgl.day >= last_week.day and tgl.day <= today.day:
+                    print('Masuk 3')
+                    data = {
+                        'id': id,
+                        'nama': nama,
+                        'tanggal': tgl,
+                        'status' : 'success'
+                    }
+                    list_jemaat.append(data)
+    except:
+        pass
     return list_jemaat
 
 def get_all_jemaat():
