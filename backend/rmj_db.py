@@ -555,8 +555,6 @@ def get_birthday():
     today = datetime.now().replace(hour=23, minute=59, second=59, microsecond=999999)
     abs = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.tgl_lahir).filter(Jemaat.status == 'active').all()
     print(abs)
-    if abs == None:
-        return {'status' : 'failed'}
     last_week = today - timedelta(days=7)
     try:
         for id,nama,tgl in abs:

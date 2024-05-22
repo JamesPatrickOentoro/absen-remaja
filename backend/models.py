@@ -43,7 +43,7 @@ class Jemaat(db.Model):
 class Absen(db.Model):
     __table_args__ = {'extend_existing': True}
     id_absen = db.Column('id_absen', db.Integer, primary_key=True)
-    id_jemaat = db.Column('id_jemaat', db.Integer, db.ForeignKey('jemaat.id_jemaat'))
+    id_jemaat = db.Column('id_jemaat', db.Integer)
     waktu_absen = db.Column('waktu_absen', db.DateTime, default=func.now()) #, server_default=db.func.now()
     def __init__(self,id_jemaat, waktu_absen):
         self.id_jemaat = id_jemaat
