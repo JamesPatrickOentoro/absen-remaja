@@ -556,11 +556,14 @@ def get_birthday():
     abs = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.tgl_lahir).filter(Jemaat.status == 'active').all()
     print(abs)
     if abs == None:
+        # print('type after:',type(Jemaat.tgl_lahir))
         return {'status' : 'failed'}
     last_week = today - timedelta(days=7)
     try:
         for id,nama,tgl in abs:
+            print(nama)
             print('Masuk 1')
+            print(tgl)
             if tgl.month == today.month:
                 print('Masuk 2')
                 print(tgl.day, last_week.day, tgl.day, today.day)
