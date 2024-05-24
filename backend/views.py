@@ -12,10 +12,6 @@ def halo():
 def all_absen():
     return jsonify(get_all_absen())
 
-@views.route('/init_table',methods=['POST','GET'])
-def all_absen():
-    return jsonify(initiate_table())
-
 @views.route('/filter-date-absent',methods=['POST','GET'])
 def get_date_absen():
     if request.method == 'POST':
