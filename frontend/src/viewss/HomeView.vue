@@ -88,4 +88,12 @@ export default {
 };
 
 </script>
-<style></style>
+<style>
+@media (max-width: 768px) {
+  .content {
+    display: flex;
+    flex-direction: row;
+    /* text-align: center; */
+  }
+}
+</style>
