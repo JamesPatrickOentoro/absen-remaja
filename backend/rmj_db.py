@@ -527,6 +527,7 @@ def visualize_monthly_absen(year, month):
     count = [0] * len(weekly)
     for id_jemaat, waktu_absen in abs:
         for i in range(len(weekly)):
+            print(waktu_absen,weekly[i])
             if waktu_absen <= weekly[i]:
                 count[i]+=1
                 break
@@ -545,8 +546,8 @@ def get_all_sundays(year, month):
     # Calculate offsets to reach all Sundays (considering wrapping)
     offsets = range((6 - weekday) % 7 + 1, days_in_month + 1, 7)
 
-    # Create a list of datetime objects for all Sundays using list comprehension
-    all_sundays = [datetime(year, month, day) for day in offsets]
+    # Create a list of datetime objects for all Sundays with time set to 23:59:59
+    all_sundays = [datetime(year, month, day, 23, 59, 59) for day in offsets]
 
     return all_sundays
 

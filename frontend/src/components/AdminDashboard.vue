@@ -1,60 +1,73 @@
 <template>
-    <div class="contain">
-        <!-- Dashboard card for Attended -->
-        <div class="card-absent">
-            <div class="card-content-absent">
-                <h2>Attended</h2>
-                <p>{{ attended }}</p>
-            </div>
-        </div>
-    </div>
-
-    <div class="other-contain">
-        <div class="card">
-            <div class="card-content">
-                <select v-model="selectedYear" class="select">
-                    <option disabled selected value="">Year</option>
-                    <option v-for="year in years" :key="year">{{ year }}</option>
-                </select>
-                <select v-model="selectedMonth" class="select">
-                    <option disabled selected value="">Month</option>
-                    <option v-for="(month, index) in months" :key="month" :value="index + 1">{{ month }}</option>
-                </select>
-                <button @click="fetchMonthlyAbsentData" class="button">Generate</button>
-            </div>
-            <div class="card-chart">
-                <canvas id="barChart" width="400" height="300"></canvas>
-            </div>
-        </div>
-    </div>
-
-    <div class="new-comer-container">
-        <h2 style="position: sticky;">New Commers</h2>
-        <div class="new-comer-content">
-            <div class="new-comer-elements">
-                <div v-for="newComer in newCommers" :key="newComer.id" class="new-comer-card">
-                    <p>{{ newComer.nama }} </p>
-                    <p>{{ formatDate(newComer.tanggal) }}</p>
+    <div id="app" class="dashboard-container">
+        <!-- Left side -->
+        <div class="dashboard-column">
+            <div class="contain">
+                <!-- Dashboard card for Attended -->
+                <div class="card-absent">
+                    <div class="card-content-absent">
+                        <h2> Attended</h2>
+                        <p>{{ attended }}</p>
+                    </div>
                 </div>
             </div>
-        </div>
-    </div>
 
-    <div id="app">
-        <div class="new-comer-container">
-            <h2 style="position: sticky;">Absent Students</h2>
-            <div class="new-comer-content">
-                <div class="new-comer-elements">
-                    <div v-for="absentStudent in absentStudents" :key="absentStudent.id" class="new-comer-card">
-                        <p>{{ absentStudent.nama }}</p>
-                        <p>{{ formatDate(absentStudent.waktu_absen) }}</p>
+            <!-- New Comers -->
+            <div class="new-comer-container">
+                <h2>New Comers</h2>
+                <div class="new-comer-content">
+                    <div class="new-comer-elements">
+                        <div v-for="newComer in newCommers" :key="newComer.id" class="new-comer-card">
+                            <p>{{ newComer.nama }}</p>
+                            <p>{{ formatDate(newComer.tanggal) }}</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <div id="app">
+
+        <!-- Middle -->
+        <div class="dashboard-column">
+            <!-- Generate Monthly Absent Data -->
+            <div class="other-contain">
+                <div class="card">
+                    <div class="card-content">
+                        <select v-model="selectedYear" class="select">
+                            <option disabled selected value="">Year</option>
+                            <option v-for="year in years" :key="year">{{ year }}</option>
+                        </select>
+                        <select v-model="selectedMonth" class="select">
+                            <option disabled selected value="">Month</option>
+                            <option v-for="(month, index) in months" :key="month" :value="index + 1">{{ month }}
+                            </option>
+                        </select>
+                        <button @click="fetchMonthlyAbsentData" class="button">Generate</button>
+                    </div>
+                    <div class="card-chart">
+                        <canvas id="barChart" width="400" height="300"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right side -->
+        <div class="dashboard-column">
+            <!-- Absent Students -->
             <div class="new-comer-container">
-                <h2 style="position: sticky;">Birthdays</h2>
+                <h2>Absent Students</h2>
+                <div class="new-comer-content">
+                    <div class="new-comer-elements">
+                        <div v-for="absentStudent in absentStudents" :key="absentStudent.id" class="new-comer-card">
+                            <p>{{ absentStudent.nama }}</p>
+                            <p>{{ formatDate(absentStudent.waktu_absen) }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Birthdays -->
+            <div class="new-comer-container">
+                <h2>Birthdays</h2>
                 <div class="new-comer-content">
                     <div class="new-comer-elements">
                         <div v-for="birthday in studentBirthdays" :key="birthday.id" class="new-comer-card">
@@ -66,8 +79,6 @@
             </div>
         </div>
     </div>
-
-
 </template>
 
 <script>
@@ -150,9 +161,9 @@ export default {
         renderChart(jumlah, minggu) {
             const formattedMinggu = minggu.map(dateString => {
                 const date = new Date(dateString);
-                const day = String(date.getDate()).padStart(2, '0');
-                const month = String(date.getMonth() + 1).padStart(2, '0');
-                const year = String(date.getFullYear()).slice(-2);
+                const day = String(date.getUTCDate()).padStart(2, '0');
+                const month = String(date.getUTCMonth() + 1).padStart(2, '0');
+                const year = String(date.getUTCFullYear()).slice(-2);
                 return `${day}-${month}-${year}`;
             });
             // Update chart data
@@ -235,6 +246,15 @@ export default {
 
 </script>
 <style>
+.dashboard-container {
+    display: flex;
+}
+
+.dashboard-column {
+    flex: 1;
+    margin-right: 20px;
+}
+
 .contain {
     /* display: flex; */
     /* flex-wrap: wrap; Allow cards to wrap to the next line */
@@ -256,6 +276,8 @@ export default {
     border: 1px solid #ccc;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
+    border-radius: 10px;
+    margin-bottom: 20px;
 }
 
 .new-comer-content {
@@ -340,6 +362,7 @@ export default {
     margin-bottom: 20px;
     background-color: #fff;
     height: 50%;
+    margin-left: 20px;
 }
 
 .card-content-absent {
