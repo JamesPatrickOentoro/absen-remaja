@@ -19,10 +19,10 @@
                       Username atau password salah.
                     </div>
                     <div class="form-group">
-                      <input type="text" class="form-control" v-model="adminUsername" placeholder="Username">
+                      <input type="text" class="form-control" v-model="adminUsername">
                     </div>
                     <div class="form-group">
-                      <input type="password" class="form-control" v-model="adminPass" placeholder="Password">
+                      <input type="password" class="form-control" v-model="adminPass">
                     </div>
                   </div>
                   <div class="modal-footer">
@@ -116,24 +116,3 @@
   }
   </style>
    
-
-<!-- <template>
-    <nav class="navbar">
-        <a class="navbar-brand" href="#">Logo</a>
-        <button class="btn btn-primary">Admin Login</button>
-    </nav>
-</template>
-<script></script>
-<style>
-.navbar {
-    margin:0;
-    padding: 0;
-    background-color: #f8f9fa;
-    /* padding: 10px 20px; */
-}
-
-.navbar-brand {
-    font-weight: bold;
-    color: #343a40;
-}
-</style> -->

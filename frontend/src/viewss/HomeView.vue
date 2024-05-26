@@ -66,6 +66,7 @@ export default {
                     .then(response => {
                         // Handle the response as needed
                         console.log(this.selectedId)
+                        console.log(response.data)
                         alert(response.data.status)
                     })
                     .catch(error => {

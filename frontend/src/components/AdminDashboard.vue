@@ -1,12 +1,12 @@
 <template>
     <div class="contain">
         <!-- Dashboard card for Absent -->
-        <div class="card-absent">
+        <!-- <div class="card-absent">
             <div class="card-content-absent">
                 <h2>Absent</h2>
                 <p>{{ absent }}</p>
             </div>
-        </div>
+        </div> -->
 
         <!-- Dashboard card for Attended -->
         <div class="card-absent">
