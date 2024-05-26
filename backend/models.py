@@ -21,7 +21,7 @@ class Jemaat(db.Model):
     foto = db.Column('foto_jemaat',db.String(100))
     status = db.Column('status',db.String(100))
     tgl_daftar = db.Column('tanggal_daftar',db.DateTime)
-    absens = db.relationship('Absen')
+    # absens = db.relationship('Absen')
     def __init__(self, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status,tgl_daftar):
         self.nama = nama
         self.no_telp = no_telp
