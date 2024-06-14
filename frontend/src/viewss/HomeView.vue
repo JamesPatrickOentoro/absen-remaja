@@ -1,25 +1,22 @@
 <template>
     <HeaderBefore></HeaderBefore>
-    <div class="container">
-        <div class="row content justify-content-md-center">
-            <div class="col-md-6">
-                <img src="@/assets/Hari reformasi_.png" />
-            </div>
-            <div class="col-md-5" id="cards">
+    <div class="absen-container">
+        <div class="absen-contain">
+            <div class="absen-catalogue" id="absen-cards">
                 <h2>Absensi</h2>
                 <br>
                 <form v-on:submit.prevent="loginStudent">
-                    <div class="form-group">
+                    <div class="absen-form-group">
                         <h5>Nama Lengkap</h5>
                         <SearchAutocomplete :items=recommendations @itemselected="onItemSelected" />
                     </div>
 
-                    <div class="row" id="terdaftar">
-                        <div class="col-md-8 col-sm-9">
+                    <div class="absen-content" id="terdaftar">
+                        <div class="pendaftaran">
                             Belum terdaftar? <router-link to="/login">Daftar di sini</router-link> 
                         </div>
-                        <div class="col-sm-2 justify-content-sm-right">
-                          <button id='' class="btn btn-class">
+                        <div class="absen-submit-button">
+                          <button id='' class="btn-submit">
                                 Submit</button>
                         </div>
                     </div>
@@ -89,11 +86,69 @@ export default {
 
 </script>
 <style>
-@media (max-width: 768px) {
-  .content {
-    display: flex;
-    flex-direction: row;
-    /* text-align: center; */
-  }
+.absen-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.absen-contain {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 50px;
+  width: 100%;
+  max-width: 600px;
+}
+
+.absen-catalogue h2 {
+  /* margin-bottom: 20px; */
+  color: #333;
+}
+
+.absen-form-group {
+  margin-bottom: 15px;
+}
+
+.absen-form-group h5 {
+  /* margin-bottom: 5px; */
+  color: #555;
+}
+
+.absen-content {
+  margin-top: 20px;
+}
+
+.pendaftaran {
+  margin-bottom: 15px;
+  color: #777;
+}
+
+.pendaftaran a {
+  color: #007bff;
+  text-decoration: none;
+}
+
+.pendaftaran a:hover {
+  text-decoration: underline;
+}
+
+/* .absen-submit-button {
+  text-align: center;
+} */
+
+.btn-submit {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-submit:hover {
+  background-color: #0056b3;
 }
 </style>

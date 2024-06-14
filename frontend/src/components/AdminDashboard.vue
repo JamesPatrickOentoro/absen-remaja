@@ -101,9 +101,6 @@ export default {
                 datasets: [{
                     label: 'Jumlah',
                     data: [],
-                    // backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                    // borderColor: 'rgba(54, 162, 235, 1)',
-                    // borderWidth: 1
                 }]
             }, // Variable to store the chart instance
             newCommers: [],
@@ -241,38 +238,48 @@ export default {
         }
     },
 };
-
-
-
 </script>
+
 <style>
 .dashboard-container {
     display: flex;
+    flex-wrap: wrap;
+    margin-left: 100px;
+    max-width: 100%;
+    overflow-x: none;
 }
 
 .dashboard-column {
     flex: 1;
+    min-width: 400px;
     margin-right: 20px;
 }
 
+
+
+@media (max-width: 768px) {
+    .dashboard-column {
+        flex: 100%;
+        margin-right: 0;
+        margin-bottom: 20px;
+        overflow-x: none;
+        max-width: 100%;
+        transform: translateX(-120px);
+    }
+}
+
 .contain {
-    /* display: flex; */
-    /* flex-wrap: wrap; Allow cards to wrap to the next line */
     gap: 6px;
-    /* Add some space between cards */
 }
 
 .other-contain {
-    margin-left: 20px
+    margin-left: 20px;
 }
-
 
 /* new commer  */
 .new-comer-container {
     margin-left: 20px;
     max-height: 400px;
-    /* overflow-y: auto; */
-    /* max-height: 200px; */
     border: 1px solid #ccc;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
@@ -283,8 +290,6 @@ export default {
 .new-comer-content {
     overflow-y: auto;
     max-height: 300px;
-    /* border: 1px solid #ccc; */
-    /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
     padding: 20px;
 }
 
@@ -299,7 +304,6 @@ export default {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
     margin-bottom: 20px;
-    /* background-color: #f9f9f9; */
 }
 
 .new-comer-card p {
@@ -308,22 +312,19 @@ export default {
 }
 
 .card {
-    /* flex: 1;  */
-    /* border: 1px solid #ccc; */
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
     margin-bottom: 20px;
     background-color: #fff;
-    /* padding:30px */
 }
 
 .card-content {
     display: flex;
     align-items: center;
     gap: 10px;
-    /* margin-bottom: 10px; */
-    padding: 20px
+    padding: 20px;
+    flex-wrap: wrap;
 }
 
 .select {
@@ -347,14 +348,13 @@ export default {
     background-color: #0056b3;
 }
 
-
 .card-chart {
     flex-grow: 1;
-    padding: 20px
+    padding: 20px;
+    width: 100%;
 }
 
 .card-absent {
-    /* flex: 1; Take up equal space within the container */
     border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -376,6 +376,5 @@ export default {
 .card-absent p {
     font-size: 32px;
     font-weight: bold;
-    /* color: #007bff; */
 }
 </style>
