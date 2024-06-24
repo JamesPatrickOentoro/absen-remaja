@@ -44,9 +44,9 @@ export default {
             autocomplete: 'off',
         };
     },
-    mounted() {
-        this.fetchRecommendations();
-    },
+    // mounted() {
+    //     this.fetchRecommendations();
+    // },
     methods: {
         async fetchRecommendations() {
             try {
