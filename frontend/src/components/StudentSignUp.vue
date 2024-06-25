@@ -30,12 +30,12 @@
                     <div class="form-group">
                         <label for="gender">Jenis Kelamin</label><br>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" id="laki-laki" value="laki-laki"
+                            <input class="form-check-input" type="radio" id="laki-laki" value="L"
                                 v-model="formData.gender" required>
                             <label class="form-check-label" for="male">Laki-laki</label>
                         </div>
                         <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" id="perempuan" value="perempuan"
+                            <input class="form-check-input" type="radio" id="perempuan" value="P"
                                 v-model="formData.gender" required>
                             <label class="form-check-label" for="female">Perempuan</label>
                         </div>
