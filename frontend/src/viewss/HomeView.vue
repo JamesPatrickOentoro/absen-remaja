@@ -26,7 +26,7 @@
     </div>
 </template>
 <script>
-import SearchAutocomplete from '@/components/SearchAutocomplete.vue'
+import SearchAutocomplete from '@/components/SearchAutocomplete.vue';
 import axios from 'axios';
 import HeaderBefore from '@/components/HeaderBefore.vue';
 
@@ -134,10 +134,6 @@ export default {
 .pendaftaran a:hover {
   text-decoration: underline;
 }
-
-/* .absen-submit-button {
-  text-align: center;
-} */
 
 .btn-submit {
   background-color: #007bff;
