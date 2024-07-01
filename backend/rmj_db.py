@@ -2,6 +2,7 @@
 # from flask_sqlalchemy import SQLAlchemy
 # from flask_cors import CORS
 print("Before importing pandas")
+from pytz import timezone
 from datetime import datetime, timedelta
 import pandas as pd
 # from werkzeug.security import check_password_hash
@@ -457,6 +458,7 @@ def get_all_absen(status=None, nama=None, tanggal=None):
     abs = query.all()
 
     list_absen = []
+    
     for id_jemaat, nama, status, waktu_absen in abs:
         data = {
             "id_jemaat": id_jemaat,
@@ -465,6 +467,15 @@ def get_all_absen(status=None, nama=None, tanggal=None):
             "waktu_absen": waktu_absen
         }
         list_absen.append(data)
+        if waktu_absen.tzinfo:
+            if waktu_absen.tzinfo == timezone('Asia/Jakarta'):
+                print("The timestamp is in WIB (Asia/Jakarta) timezone.")
+            elif waktu_absen.tzinfo == timezone('UTC'):
+                print("The timestamp is in GMT (UTC) timezone.")
+            else:
+                print("The timestamp is in another timezone.")
+        else:
+            print("The timezone information is not available.")
 
     return list_absen
         
