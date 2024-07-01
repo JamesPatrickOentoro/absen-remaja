@@ -1,5 +1,5 @@
 from . import db
-from datetime import datetime
+# from datetime import datetime
 from sqlalchemy.sql import func
 
 class Jemaat(db.Model):

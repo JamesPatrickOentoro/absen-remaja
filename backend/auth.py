@@ -18,7 +18,9 @@ def login_student():
     if request.method == 'POST':
         data = request.get_json()
         id_jemaat  = data['id_jemaat']
-        login_time = datetime.now() 
+        wib = pytz.timezone('Asia/Jakarta')
+        utc_now = datetime.now(pytz.utc)
+        login_time = utc_now.astimezone(wib)
         if add_absen(id_jemaat,login_time) ==  True:
             return jsonify({'status':f'success absen jemaat {id_jemaat}'})
     else:
