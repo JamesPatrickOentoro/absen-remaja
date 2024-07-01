@@ -84,7 +84,7 @@ export default {
 
 <style>
     /* Basic styles for the header */
-   .navbar-before {
+.navbar-before {
   box-shadow: rgba(0, 0, 0, 0.06) 0 0 6px 2px;
   background-color: #fff;
   padding: 10px 20px;

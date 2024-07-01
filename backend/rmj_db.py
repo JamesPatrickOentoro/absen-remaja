@@ -8,6 +8,7 @@ import pandas as pd
 from . import db
 from .models import Admin,Jemaat,Absen
 import calendar
+import pytz
 # from .main import app
 
 # app = Flask(__name__)
@@ -110,7 +111,11 @@ def add_dummy_data():
         
 def add_jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status):
     # with app.app_context():
-    new_jemaat = Jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, datetime.now())
+    wib = pytz.timezone('Asia/Jakarta')
+
+    # Get the current time in UTC
+    utc_now = datetime.now(pytz.utc)
+    new_jemaat = Jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, utc_now.astimezone(wib))
     db.session.add(new_jemaat)
     db.session.commit()
     return {
@@ -138,6 +143,7 @@ def add_absen(id_jemaat, waktu_absen):
 # Login Admin
 def login_admin(input_nama_admin, input_password):
     # with app.app_context():
+    wib = pytz.timezone('Asia/Jakarta')
     admins = db.session.query(Admin).filter_by(nama_admin=input_nama_admin).all()
     true_admin = None
     for admin in admins:
@@ -145,7 +151,8 @@ def login_admin(input_nama_admin, input_password):
             true_admin = admin
             break
     if true_admin != None:
-        true_admin.last_login = datetime.now()
+        utc_now = datetime.now(pytz.utc)
+        true_admin.last_login = utc_now.astimezone(wib)
         db.session.commit()
         data = {
             'nama_admin':admin.nama_admin,
@@ -435,7 +442,9 @@ def get_all_absen(status=None, nama=None, tanggal=None):
         query = query.filter(Jemaat.nama.ilike(f'%{nama}%'))
 
     if tanggal:
-        tanggal_obj = datetime.strptime(tanggal, '%Y-%m-%d').date()
+        wib = pytz.timezone('Asia/Jakarta')
+        naive_wib_datetime = datetime.strptime(tanggal, '%Y-%m-%d').date()
+        tanggal_obj = wib.localize(naive_wib_datetime)
         # Mendapatkan tanggal, bulan, dan tahun dari objek datetime
         tahun = tanggal_obj.year
         bulan = tanggal_obj.month
@@ -513,7 +522,9 @@ def get_absen_by_date(date):
     
 def visualize_monthly_absen(year, month):
     # list_absen = []
-    this_month = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d")
+    wib = pytz.timezone('Asia/Jakarta')
+    naive_wib_datetime = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d")
+    this_month = wib.localize(naive_wib_datetime)
     # print(this_month)
     abs = db.session.query(Absen.id_absen, Absen.waktu_absen).filter(Absen.waktu_absen >= this_month).all()
     # for id_jemaat, waktu_absen in abs:
@@ -552,8 +563,10 @@ def get_all_sundays(year, month):
     return all_sundays
 
 def get_birthday():
-    list_jemaat = [] 
-    today = datetime.now().replace(hour=23, minute=59, second=59, microsecond=999999)
+    list_jemaat = []
+    wib = pytz.timezone('Asia/Jakarta')
+    utc_now = datetime.now(pytz.utc)
+    today = utc_now.astimezone(wib).replace(hour=23, minute=59, second=59, microsecond=999999)
     abs = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.tgl_lahir).filter(Jemaat.status == 'active').all()
     print(abs)
     if abs == None:
@@ -619,8 +632,10 @@ def get_all_jemaat():
 #     return all_active_jemaat
 
 def get_all_absent_today():
+    wib = pytz.timezone('Asia/Jakarta')
     absen_jemaat = []
-    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    utc_now = datetime.now(pytz.utc)
+    today = utc_now.astimezone(wib).replace(hour=0, minute=0, second=0, microsecond=0)
     abs = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).filter(Jemaat.status == 'active').filter(Absen.waktu_absen >= today).all()
     for id, nama, waktu in abs:
         data = {
@@ -652,7 +667,9 @@ def add_academic_year():
 
 def get_new_commers():
     new_commers = []
-    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    wib = pytz.timezone('Asia/Jakarta')
+    utc_now = datetime.now(pytz.utc)
+    today = utc_now.astimezone(wib).replace(hour=0, minute=0, second=0, microsecond=0)
     jemaats = db.session.query(Jemaat.id_jemaat,Jemaat.nama,Jemaat.tgl_daftar).filter(Jemaat.status == 'active').filter(Jemaat.tgl_daftar >= today).all()
     for id, nama, tanggal in jemaats:
         data = {
@@ -665,7 +682,9 @@ def get_new_commers():
 
 def get_absent_more_three():
     absent = []
-    today = datetime.today()
+    wib = pytz.timezone('Asia/Jakarta')
+    today_utc = datetime.today()
+    today = wib.localize(today_utc)
     three_weeks_ago = today - timedelta(weeks=3)
     print(three_weeks_ago)
     three_weeks_ago_start_of_day = three_weeks_ago.replace(hour=0, minute=0, second=0, microsecond=0)

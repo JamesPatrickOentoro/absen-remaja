@@ -22,11 +22,11 @@
                     </div>
                 </form>
             </div>
-        </div>
+          </div>
     </div>
 </template>
 <script>
-import SearchAutocomplete from '@/components/SearchAutocomplete.vue';
+import SearchAutocomplete from '@/components/SearchAutocomplete.vue'
 import axios from 'axios';
 import HeaderBefore from '@/components/HeaderBefore.vue';
 
@@ -135,6 +135,10 @@ export default {
   text-decoration: underline;
 }
 
+/* .absen-submit-button {
+  text-align: center;
+} */
+
 .btn-submit {
   background-color: #007bff;
   color: white;
@@ -146,5 +150,13 @@ export default {
 
 .btn-submit:hover {
   background-color: #0056b3;
+}
+.pop-log{
+  position: fixed;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  transform: translateY(-50%)
 }
 </style>
