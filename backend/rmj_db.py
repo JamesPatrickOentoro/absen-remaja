@@ -589,20 +589,27 @@ def get_birthday():
             print(nama)
             print('Masuk 1')
             print(tgl)
-            if tgl.month == today.month:
-                print('Masuk 2')
-                print(tgl.day, last_week.day, tgl.day, today.day)
-                if tgl.day >= last_week.day and tgl.day <= today.day:
-                    print('Masuk 3')
-                    data = {
-                        'id': id,
-                        'nama': nama,
-                        'tanggal': tgl,
-                        'status' : 'success'
-                    }
-                    list_jemaat.append(data)
+            tgl_day_month = (tgl.month, tgl.day)
+            today_day_month = (today.month, today.day)
+            last_week_day_month = (last_week.month, last_week.day)
+            days_in_last_week = [(last_week + timedelta(days=i)).timetuple()[1:3] for i in range(8)]
+            # if last_week <= tgl <= today:
+            # if tgl.month == today.month:
+            #     print('Masuk 2')
+            #     print(tgl.day, last_week.day, tgl.day, today.day)
+            #     if tgl.day >= last_week.day and tgl.day <= today.day:
+            #         print('Masuk 3')
+            if tgl_day_month in days_in_last_week:
+                data = {
+                    'id': id,
+                    'nama': nama,
+                    'tanggal': tgl,
+                    'status' : 'success'
+                }
+                list_jemaat.append(data)
     except:
         pass
+    print(list_jemaat)
     return list_jemaat
 
 def get_all_jemaat():
