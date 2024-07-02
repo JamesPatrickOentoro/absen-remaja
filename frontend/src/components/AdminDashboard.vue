@@ -256,7 +256,6 @@ export default {
 }
 
 
-
 @media (max-width: 768px) {
     .dashboard-column {
         flex: 100%;
