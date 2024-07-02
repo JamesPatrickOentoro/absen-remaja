@@ -12,7 +12,7 @@
     </div>
   </nav>
 
-  <div v-if="showForm" class="fade show" tabindex="-1" role="dialog" style="display: block;">
+   <div v-if="showForm" class="fade show" tabindex="-1" role="dialog" style="display: block;">
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">

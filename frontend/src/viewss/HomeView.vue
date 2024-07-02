@@ -1,6 +1,16 @@
 <template>
     <HeaderBefore></HeaderBefore>
     <div class="absen-container">
+        <div class="pop-log" :class="{ 'show': showPopLog }">
+            Login Berhasil
+        </div>
+        <div class="pop-log" :class="{ 'show': showPopLogFailed }">
+            Login Gagal
+        </div>
+        <div class="pop-log" :class="{ 'show': showPopLogUnpicked}">
+            Data Belum Dipilih
+        </div>
+
         <div class="absen-contain">
             <div class="absen-catalogue" id="absen-cards">
                 <h2>Absensi</h2>
@@ -10,7 +20,6 @@
                         <h5>Nama Lengkap</h5>
                         <SearchAutocomplete :items=recommendations @itemselected="onItemSelected" />
                     </div>
-
                     <div class="absen-content" id="terdaftar">
                         <div class="pendaftaran">
                             Belum terdaftar? <router-link to="/login">Daftar di sini</router-link>
@@ -23,11 +32,9 @@
                     </div>
                 </form>
             </div>
-            <div class="pop-log" v-if="showPopLog">
-                Login Berhasil
-            </div>
         </div>
     </div>
+
 </template>
 <script>
 import SearchAutocomplete from '@/components/SearchAutocomplete.vue'
@@ -46,7 +53,9 @@ export default {
             recommendations: [], // Array of usernames from your JSON
             showAutocomplete: true,
             autocomplete: 'off',
-            showPopLog: false, 
+            showPopLog: false,
+            showPopLogFailed: false,
+            showPopLogUnpicked: false,
         };
     },
     mounted() {
@@ -68,16 +77,25 @@ export default {
                     .then(response => {
                         // Handle the response as needed
                         this.showPopLog = true;
-                        console.log(this.selectedId)
-                        console.log(response.data)
-                        // alert(response.data.status)
+                        setTimeout(() => {
+                            this.showPopLog = false; // Hide pop-up after a short delay
+                        }, 1000);
+                        console.log(this.selectedId);
+                        console.log(response.data);
                     })
                     .catch(error => {
+                        this.showPopLogFailed = true;
+                        setTimeout(() => {
+                            this.showPopLogFailed= false; // Hide pop-up after a short delay
+                        }, 1000);
                         console.error('Error submitting form', error);
                     });
                 this.selectedId = null;
             } else {
-                alert('not selected!')
+                this.showPopLogUnpicked = true;
+                        setTimeout(() => {
+                            this.showPopLogUnpicked = false; // Hide pop-up after a short delay
+                        }, 1000);
             }
         },
         onItemSelected(id) {
@@ -101,6 +119,7 @@ export default {
 }
 
 .absen-contain {
+    position: relative;
     background-color: white;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -129,6 +148,7 @@ export default {
 .pendaftaran a {
     color: #007bff;
     text-decoration: none;
+    /* transform:translateY(-150px) */
 }
 
 .pendaftaran a:hover {
@@ -149,19 +169,42 @@ export default {
 }
 
 .pop-log {
-    position: fixed;
-    top: 50%; /* Vertically center */
-    left: 50%; /* Horizontally center */
-    transform: translate(-100%); /* Center itself */
-    background: white;
+    position: absolute;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    z-index: 9;
+    width: 300px;
+    background: rgb(255, 253, 253);
     border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    z-index: 1000; /* Ensure it's on top of other content */
-    display: none; /* Initially hide */
+    box-shadow: 0 0 200px rgba(0, 0, 0, 0.5);
+    padding: 60px;
+    display: none;
+    /* display:block; */
+}
+
+.pop-log p {
+    text-align: center;
 }
 
 .pop-log.show {
-    display:block; 
+    display: block;
+}
+@media (max-width: 768px) {
+    .absen-contain {
+        padding: 10px;
+    }
+
+    .btn-submit {
+        padding: 10px;
+    }
+
+    .pop-log {
+        width: 90%;
+        height:30%;
+        padding:18%;
+        align-items: center;
+        justify-content: center;
+    }
 }
 </style>

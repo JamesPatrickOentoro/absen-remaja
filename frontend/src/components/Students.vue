@@ -48,7 +48,7 @@
               <input type="text" id="edit-name" v-model="editedStudent.nama" class="form-control" placeholder="Enter name">
             </div>
             <div class="form-group">
-              <label for="edit-birth">Date of Birth:</label>
+              <label for="edit-birth">Tanggal Lahir:</label>
               <input type="datetime-local" id="edit-birth" v-model="editedStudent.tgl_lahir" class="form-control" placeholder="Enter date of birth">
             </div>
             <div class="form-group">

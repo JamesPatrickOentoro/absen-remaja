@@ -72,7 +72,7 @@
                     <div class="new-comer-elements">
                         <div v-for="birthday in studentBirthdays" :key="birthday.id" class="new-comer-card">
                             <p>{{ birthday.nama }}</p>
-                            <p>{{ birthday.tanggal }}</p>
+                            <p>{{ formatDate(birthday.tanggal) }}</p>
                         </div>
                     </div>
                 </div>
@@ -90,7 +90,7 @@ export default {
         return {
             selectedYear: '',
             selectedMonth: '',
-            years: ['2022', '2023', '2024'], // Add years as needed
+            years: [], // Add years as needed
             months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             chart: null,
             absent: 0,
@@ -110,10 +110,11 @@ export default {
     },
     mounted() {
         // Render an empty chart on component mount
+        this.generateYears();
         this.renderChart([], []);
         this.fetchTodayAttendance();
         this.fetchNewCommers();
-        this.fetchNewStudents();
+        this.fetchAbsentStudents();
         this.fetchBirthdays();
 
         // Panggil metode setiap 5 menit
@@ -129,6 +130,13 @@ export default {
     },
 
     methods: {
+        generateYears() {
+            const currentYear = new Date().getFullYear();
+            const startYear = currentYear - 10; // Adjust this to include more years if needed
+            for (let year = startYear; year <= currentYear; year++) {
+                this.years.push(year.toString());
+            }
+        },
         fetchMonthlyAbsentData() {
             const year = this.selectedYear;
             const monthIndex = this.selectedMonth - 1;
@@ -205,7 +213,7 @@ export default {
                     console.error('Error fetching new commers:', error);
                 });
         },
-        fetchNewStudents() {
+        fetchAbsentStudents() {
             axios.post('absen/long-absent').then(
                 response => {
                     this.absentStudents = response.data;
@@ -244,14 +252,17 @@ export default {
 .dashboard-container {
     display: flex;
     flex-wrap: wrap;
-    margin-left: 90px;
+    /* margin-left: 90px; */
     max-width: 100%;
     overflow-x: none;
+    max-height: 80vh;
+    scroll-behavior: smooth;
+    overflow-y: auto;
 }
 
 .dashboard-column {
     flex: 1;
-    min-width: 400px;
+    min-width: 500px;
     margin-right: 20px;
 }
 
@@ -261,9 +272,9 @@ export default {
         flex: 100%;
         margin-right: 0;
         margin-bottom: 20px;
-        overflow-x: none;
-        max-width: 100%;
-        transform: translateX(-120px);
+        overflow-x: hidden;
+        max-width: 90%;
+        /* transform: translateX(-120px); */
     }
 }
 
@@ -278,7 +289,7 @@ export default {
 /* new commer  */
 .new-comer-container {
     margin-left: 20px;
-    max-height: 400px;
+    max-height: 350px;
     border: 1px solid #ccc;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
@@ -288,7 +299,7 @@ export default {
 
 .new-comer-content {
     overflow-y: auto;
-    max-height: 300px;
+    max-height: 250px;
     padding: 20px;
 }
 
@@ -316,6 +327,7 @@ export default {
     padding: 20px;
     margin-bottom: 20px;
     background-color: #fff;
+    height: 500px;
 }
 
 .card-content {

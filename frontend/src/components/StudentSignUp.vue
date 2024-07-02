@@ -9,7 +9,7 @@
                     </div>
                     <div class="form-group">
                         <label for="phone">Nomor Telepon</label>
-                        <input type="text" id="phone" class="form-control" v-model="formData.no_telp" required>
+                        <input type="tel" id="phone" class="form-control" v-model="formData.no_telp" pattern="[0-9]{10,15}" required>
                     </div>
                     <div class="form-group">
                         <label for="email">Email</label>
@@ -45,11 +45,7 @@
                         <input type="date" id="birthdate" class="form-control" v-model="formData.tgl_lahir" required>
                     </div>
                     <div class="form-group">
-                        <label for="nama">Tempat Lahir</label>
-                        <input type="text" id="name" class="form-control" v-model="formData.temp_lahir" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="nama">Alamat Lahir</label>
+                        <label for="nama">Alamat</label>
                         <input type="text" id="name" class="form-control" v-model="formData.alamat" required>
                     </div>
                     <div class="form-group">
@@ -57,12 +53,12 @@
                         <input type="text" id="name" class="form-control" v-model="formData.daerah" required>
                     </div>
                     <div class="form-group">
-                        <label for="nama">Kecamaatan</label>
-                        <input type="text" id="name" class="form-control" v-model="formData.kecamatan" required>
+                        <label for="nama">Kecamatan</label>
+                        <input type="text" id="name" class="form-control" v-model="formData.kecamatan" >
                     </div>
                     <div class="form-group">
                         <label for="nama">No.Telp Orangtua</label>
-                        <input type="text" id="name" class="form-control" v-model="formData.no_telp_ortu" required>
+                        <input type="tel" id="name" class="form-control" v-model="formData.no_telp_ortu" pattern="[0-9]{10,15}" required>
                     </div>
                     <button type="submit" class="btn btn-class">Register</button>
                     <button type="button" class="btn btn-secondary" @click="closeForm">Tutup</button>
@@ -91,7 +87,7 @@ export default {
                 gender: '',
                 hobi: '',
                 sekolah: '',
-                tgl_lahir: '',
+                tgl_lahir: 'none',
                 temp_lahir: '',
                 no_telp_ortu: '',
                 kelas: null,
@@ -108,14 +104,14 @@ export default {
             try {
                 const res = await axios.post('absen/student/create', {
                     nama: this.formData.nama,
-                    no_telp: this.formData.no_telp,
+                    no_telp: String(this.formData.no_telp),
                     email: this.formData.email,
                     gender: this.formData.gender,
                     hobi: this.formData.hobi,
                     sekolah: this.formData.sekolah,
                     temp_lahir: this.formData.temp_lahir,
                     tgl_lahir: this.formData.tgl_lahir,
-                    no_telp_ortu: this.formData.no_telp_ortu,
+                    no_telp_ortu: String(this.formData.no_telp_ortu),
                     kelas: this.formData.kelas,
                     daerah: this.formData.daerah,
                     kecamatan: this.formData.kecamatan,
