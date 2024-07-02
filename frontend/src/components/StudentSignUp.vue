@@ -66,7 +66,6 @@
                     </div>
                     <button type="submit" class="btn btn-class">Register</button>
                     <button type="button" class="btn btn-secondary" @click="closeForm">Tutup</button>
-                    <!-- <button @click="closeForm">Tutup</button> -->
                 </form>
             </div>
         </div>
