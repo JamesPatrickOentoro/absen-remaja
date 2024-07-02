@@ -80,6 +80,7 @@ export default {
                         tanggal: this.filterDate,
                     }
                 });
+                console.log(this.filteDate);
                 this.absents = response.data;
             } catch (error) {
                 console.error('Error fetching absents:', error);

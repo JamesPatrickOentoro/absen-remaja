@@ -79,7 +79,7 @@ export default {
 }
 
 .sidebar {
-    width: 250px;
+    width: 100px;
     transition: transform 0.3s ease-in-out;
 }
 

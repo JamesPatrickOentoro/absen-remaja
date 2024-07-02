@@ -244,7 +244,7 @@ export default {
 .dashboard-container {
     display: flex;
     flex-wrap: wrap;
-    margin-left: 100px;
+    margin-left: 90px;
     max-width: 100%;
     overflow-x: none;
 }

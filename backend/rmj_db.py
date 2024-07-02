@@ -2,6 +2,7 @@
 # from flask_sqlalchemy import SQLAlchemy
 # from flask_cors import CORS
 print("Before importing pandas")
+import pytz
 from pytz import timezone
 from datetime import datetime, timedelta
 import pandas as pd
@@ -9,7 +10,8 @@ import pandas as pd
 from . import db
 from .models import Admin,Jemaat,Absen
 import calendar
-import pytz
+from sqlalchemy import extract 
+
 # from .main import app
 
 # app = Flask(__name__)
@@ -431,10 +433,8 @@ def get_all_absen(status=None, nama=None, tanggal=None):
     query = db.session.query(Absen.id_jemaat, Jemaat.nama, Jemaat.status, Absen.waktu_absen).join(Absen, Absen.id_jemaat == Jemaat.id_jemaat)
 
     if status:
-        # query = query.filter(Jemaat.status == status)
         if status.lower() == 'inactive':
-            # Memfilter status yang tidak aktif
-            query = query.filter(Jemaat.status == '-')
+            query = query.filter(Jemaat.status == 'inactive')
         else:
             query = query.filter(Jemaat.status == status)
 
@@ -444,38 +444,32 @@ def get_all_absen(status=None, nama=None, tanggal=None):
 
     if tanggal:
         wib = pytz.timezone('Asia/Jakarta')
-        naive_wib_datetime = datetime.strptime(tanggal, '%Y-%m-%d').date()
+        naive_wib_datetime = datetime.strptime(tanggal, '%Y-%m-%d')
         tanggal_obj = wib.localize(naive_wib_datetime)
-        # Mendapatkan tanggal, bulan, dan tahun dari objek datetime
         tahun = tanggal_obj.year
         bulan = tanggal_obj.month
         hari = tanggal_obj.day
-        # Memfilter berdasarkan tanggal, bulan, dan tahun
-        query = query.filter(db.extract('year', Absen.waktu_absen) == tahun,
-                             db.extract('month', Absen.waktu_absen) == bulan,
-                             db.extract('day', Absen.waktu_absen) == hari)
+        query = query.filter(extract('year', Absen.waktu_absen) == tahun,
+                             extract('month', Absen.waktu_absen) == bulan,
+                             extract('day', Absen.waktu_absen) == hari)
 
     abs = query.all()
 
     list_absen = []
     
     for id_jemaat, nama, status, waktu_absen in abs:
+        if isinstance(waktu_absen, datetime):
+            waktu_absen_formatted = waktu_absen.strftime('%Y-%m-%d %H:%M:%S')
+        else:
+            waktu_absen_formatted = str(waktu_absen)
+            
         data = {
             "id_jemaat": id_jemaat,
             "nama": nama,
             "status": status,
-            "waktu_absen": waktu_absen
+            "waktu_absen": waktu_absen_formatted
         }
         list_absen.append(data)
-        if waktu_absen.tzinfo:
-            if waktu_absen.tzinfo == timezone('Asia/Jakarta'):
-                print("The timestamp is in WIB (Asia/Jakarta) timezone.")
-            elif waktu_absen.tzinfo == timezone('UTC'):
-                print("The timestamp is in GMT (UTC) timezone.")
-            else:
-                print("The timestamp is in another timezone.")
-        else:
-            print("The timezone information is not available.")
 
     return list_absen
         
@@ -589,20 +583,27 @@ def get_birthday():
             print(nama)
             print('Masuk 1')
             print(tgl)
-            if tgl.month == today.month:
-                print('Masuk 2')
-                print(tgl.day, last_week.day, tgl.day, today.day)
-                if tgl.day >= last_week.day and tgl.day <= today.day:
-                    print('Masuk 3')
-                    data = {
-                        'id': id,
-                        'nama': nama,
-                        'tanggal': tgl,
-                        'status' : 'success'
-                    }
-                    list_jemaat.append(data)
+            tgl_day_month = (tgl.month, tgl.day)
+            today_day_month = (today.month, today.day)
+            last_week_day_month = (last_week.month, last_week.day)
+            days_in_last_week = [(last_week + timedelta(days=i)).timetuple()[1:3] for i in range(8)]
+            # if last_week <= tgl <= today:
+            # if tgl.month == today.month:
+            #     print('Masuk 2')
+            #     print(tgl.day, last_week.day, tgl.day, today.day)
+            #     if tgl.day >= last_week.day and tgl.day <= today.day:
+            #         print('Masuk 3')
+            if tgl_day_month in days_in_last_week:
+                data = {
+                    'id': id,
+                    'nama': nama,
+                    'tanggal': tgl,
+                    'status' : 'success'
+                }
+                list_jemaat.append(data)
     except:
         pass
+    print(list_jemaat)
     return list_jemaat
 
 def get_all_jemaat():

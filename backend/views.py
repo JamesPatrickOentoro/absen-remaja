@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, flash
 from .rmj_db import *
 from sqlalchemy import delete
+from sqlalchemy import extract
 
 views = Blueprint('views', __name__)
 
