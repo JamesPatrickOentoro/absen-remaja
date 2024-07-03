@@ -567,7 +567,7 @@ def get_all_sundays(year, month):
 
     return all_sundays
 
-def get_birthday():
+def get_birthday(weeks_before=1):
     list_jemaat = []
     wib = pytz.timezone('Asia/Jakarta')
     utc_now = datetime.now(pytz.utc)
@@ -577,16 +577,17 @@ def get_birthday():
     if abs == None:
         # print('type after:',type(Jemaat.tgl_lahir))
         return {'status' : 'failed'}
-    last_week = today - timedelta(days=7)
+    last_week = today - timedelta(weeks=weeks_before)
     try:
         for id,nama,tgl in abs:
-            print(nama)
-            print('Masuk 1')
-            print(tgl)
+            # print(nama)
+            # print('Masuk 1')
+            # print(tgl)
             tgl_day_month = (tgl.month, tgl.day)
             today_day_month = (today.month, today.day)
             last_week_day_month = (last_week.month, last_week.day)
-            days_in_last_week = [(last_week + timedelta(days=i)).timetuple()[1:3] for i in range(8)]
+            days_in_last_week = [(last_week + timedelta(days=i)).timetuple()[1:3] for i in range(7*weeks_before+1)]
+            print(days_in_last_week)
             # if last_week <= tgl <= today:
             # if tgl.month == today.month:
             #     print('Masuk 2')
@@ -677,32 +678,39 @@ def add_academic_year():
     db.session.commit()
     return {'status':'success'}
 
-def get_new_commers():
+def get_new_commers(weeks_before=1):
     new_commers = []
     wib = pytz.timezone('Asia/Jakarta')
     utc_now = datetime.now(pytz.utc)
     today = utc_now.astimezone(wib).replace(hour=0, minute=0, second=0, microsecond=0)
-    jemaats = db.session.query(Jemaat.id_jemaat,Jemaat.nama,Jemaat.tgl_daftar).filter(Jemaat.status == 'active').filter(Jemaat.tgl_daftar >= today).all()
+    start_date = today - timedelta(weeks=weeks_before)
+
+    jemaats = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.tgl_daftar)\
+                        .filter(Jemaat.status == 'active')\
+                        .filter(Jemaat.tgl_daftar >= start_date)\
+                        .all()
+    
     for id, nama, tanggal in jemaats:
         data = {
-            'id':id,
-            'nama':nama,
-            'tanggal':tanggal
+            'id': id,
+            'nama': nama,
+            'tanggal': tanggal
         }
         new_commers.append(data)
+    
     return new_commers
 
-def get_absent_more_three():
+def get_long_absent(weeks_before):
     absent = []
     wib = pytz.timezone('Asia/Jakarta')
     today_utc = datetime.today()
     today = wib.localize(today_utc)
-    three_weeks_ago = today - timedelta(weeks=3)
-    print(three_weeks_ago)
-    three_weeks_ago_start_of_day = three_weeks_ago.replace(hour=0, minute=0, second=0, microsecond=0)
-    jemaats = db.session.query(Jemaat.id_jemaat,Jemaat.nama,Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).filter(Absen.waktu_absen < three_weeks_ago_start_of_day).filter(Jemaat.status == 'active').all()
+    three_weeks_ago = today - timedelta(weeks=weeks_before)
+    weeks_ago_start_of_day = three_weeks_ago.replace(hour=23, minute=59, second=59, microsecond=999999)
+    print(weeks_ago_start_of_day)
+    jemaats = db.session.query(Jemaat.id_jemaat,Jemaat.nama,Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).filter(Absen.waktu_absen < weeks_ago_start_of_day).filter(Jemaat.status == 'active').all()
     latest_absen = {}
-
+    print(jemaats,'jemaats')
     # Iterate over the results and update the dictionary with the latest waktu_absen for each id_jemaat
     for id_jemaat, nama, waktu_absen in jemaats:
         if id_jemaat not in latest_absen or waktu_absen > latest_absen[id_jemaat]:
@@ -710,7 +718,7 @@ def get_absent_more_three():
 
     # Filter the results to include only the rows with the latest waktu_absen for each id_jemaat
     filtered_jemaats = [(id_jemaat, nama, waktu_absen) for id_jemaat, nama, waktu_absen in jemaats if waktu_absen == latest_absen[id_jemaat]]
-
+    print(filtered_jemaats,'filtered_jemaats')
     # Print the filtered results
     for id_jemaat, nama, waktu_absen in filtered_jemaats:
         data = {
