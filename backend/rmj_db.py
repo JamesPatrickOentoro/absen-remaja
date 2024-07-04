@@ -2,6 +2,7 @@
 # from flask_sqlalchemy import SQLAlchemy
 # from flask_cors import CORS
 print("Before importing pandas")
+import os
 import pytz
 from pytz import timezone
 from datetime import datetime, timedelta
@@ -118,7 +119,7 @@ def add_jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahi
 
     # Get the current time in UTC
     utc_now = datetime.now(pytz.utc)
-    new_jemaat = Jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, utc_now.astimezone(wib))
+    new_jemaat = Jemaat(nama.upper(), no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, utc_now.astimezone(wib))
     db.session.add(new_jemaat)
     db.session.commit()
     return {
@@ -742,3 +743,29 @@ def get_long_absent(weeks_before):
 # print(get_absen_by_tanggal(datetime(2023, 7, 11))) #Success
 # print(get_absen_by_id(1)) #Success
 # edit_data_jemaat
+def migrate_student():
+    print('MASUUKKK')
+    print(os.getcwd())
+    df = pd.read_excel('data_remaja.xlsx')
+    for index, row in df.iterrows():
+        try:
+            nama = row['nama']
+            no_telp = row['nomor']
+            email = row['email']
+            gender = row['gender']
+            hobi = row['hobby']
+            sekolah = row['sekolah']
+            temp_lahir = row['tempat_lahir']
+            tgl_lahir = row['tgl_lahir']
+            no_telp_ortu = ''
+            kelas = row['Kelas']
+            daerah = row['daerah']
+            kecamatan = row['kecamatan']
+            alamat = row['alamat']
+            foto = '' 
+            status = 'active' 
+            add_jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status)
+            print('masuk : ', index)
+        except:
+            pass
+    return {'status':'success'}
