@@ -72,7 +72,7 @@
                     <div class="new-comer-elements">
                         <div v-for="birthday in studentBirthdays" :key="birthday.id" class="new-comer-card">
                             <p>{{ birthday.nama }}</p>
-                            <p>{{ birthday.tanggal }}</p>
+                            <p>{{ formatDate(birthday.tanggal) }}</p>
                         </div>
                     </div>
                 </div>
@@ -90,7 +90,7 @@ export default {
         return {
             selectedYear: '',
             selectedMonth: '',
-            years: ['2022', '2023', '2024'], // Add years as needed
+            years: [], // Add years as needed
             months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             chart: null,
             absent: 0,
@@ -101,9 +101,6 @@ export default {
                 datasets: [{
                     label: 'Jumlah',
                     data: [],
-                    // backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                    // borderColor: 'rgba(54, 162, 235, 1)',
-                    // borderWidth: 1
                 }]
             }, // Variable to store the chart instance
             newCommers: [],
@@ -113,10 +110,11 @@ export default {
     },
     mounted() {
         // Render an empty chart on component mount
+        this.generateYears();
         this.renderChart([], []);
         this.fetchTodayAttendance();
         this.fetchNewCommers();
-        this.fetchNewStudents();
+        this.fetchAbsentStudents();
         this.fetchBirthdays();
 
         // Panggil metode setiap 5 menit
@@ -132,6 +130,13 @@ export default {
     },
 
     methods: {
+        generateYears() {
+            const currentYear = new Date().getFullYear();
+            const startYear = currentYear - 10; // Adjust this to include more years if needed
+            for (let year = startYear; year <= currentYear; year++) {
+                this.years.push(year.toString());
+            }
+        },
         fetchMonthlyAbsentData() {
             const year = this.selectedYear;
             const monthIndex = this.selectedMonth - 1;
@@ -208,7 +213,7 @@ export default {
                     console.error('Error fetching new commers:', error);
                 });
         },
-        fetchNewStudents() {
+        fetchAbsentStudents() {
             axios.post('absen/long-absent').then(
                 response => {
                     this.absentStudents = response.data;
@@ -241,38 +246,50 @@ export default {
         }
     },
 };
-
-
-
 </script>
+
 <style>
 .dashboard-container {
     display: flex;
+    flex-wrap: wrap;
+    /* margin-left: 90px; */
+    max-width: 100%;
+    overflow-x: none;
+    max-height: 80vh;
+    scroll-behavior: smooth;
+    overflow-y: auto;
 }
 
 .dashboard-column {
     flex: 1;
+    min-width: 500px;
     margin-right: 20px;
 }
 
+
+@media (max-width: 768px) {
+    .dashboard-column {
+        flex: 100%;
+        margin-right: 0;
+        margin-bottom: 20px;
+        overflow-x: hidden;
+        max-width: 90%;
+        /* transform: translateX(-120px); */
+    }
+}
+
 .contain {
-    /* display: flex; */
-    /* flex-wrap: wrap; Allow cards to wrap to the next line */
     gap: 6px;
-    /* Add some space between cards */
 }
 
 .other-contain {
-    margin-left: 20px
+    margin-left: 20px;
 }
-
 
 /* new commer  */
 .new-comer-container {
     margin-left: 20px;
-    max-height: 400px;
-    /* overflow-y: auto; */
-    /* max-height: 200px; */
+    max-height: 350px;
     border: 1px solid #ccc;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
@@ -282,9 +299,7 @@ export default {
 
 .new-comer-content {
     overflow-y: auto;
-    max-height: 300px;
-    /* border: 1px solid #ccc; */
-    /* box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); */
+    max-height: 250px;
     padding: 20px;
 }
 
@@ -299,7 +314,6 @@ export default {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
     margin-bottom: 20px;
-    /* background-color: #f9f9f9; */
 }
 
 .new-comer-card p {
@@ -308,22 +322,20 @@ export default {
 }
 
 .card {
-    /* flex: 1;  */
-    /* border: 1px solid #ccc; */
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;
     margin-bottom: 20px;
     background-color: #fff;
-    /* padding:30px */
+    height: 500px;
 }
 
 .card-content {
     display: flex;
     align-items: center;
     gap: 10px;
-    /* margin-bottom: 10px; */
-    padding: 20px
+    padding: 20px;
+    flex-wrap: wrap;
 }
 
 .select {
@@ -347,14 +359,13 @@ export default {
     background-color: #0056b3;
 }
 
-
 .card-chart {
     flex-grow: 1;
-    padding: 20px
+    padding: 20px;
+    width: 100%;
 }
 
 .card-absent {
-    /* flex: 1; Take up equal space within the container */
     border: 1px solid #ccc;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -376,6 +387,5 @@ export default {
 .card-absent p {
     font-size: 32px;
     font-weight: bold;
-    /* color: #007bff; */
 }
 </style>

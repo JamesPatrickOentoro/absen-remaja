@@ -1,6 +1,7 @@
 from flask import Blueprint, request, jsonify, flash
 from .rmj_db import *
 from sqlalchemy import delete
+from sqlalchemy import extract
 
 views = Blueprint('views', __name__)
 
@@ -121,9 +122,12 @@ def monthly_absent():
     # date = "2024-05-01"
     return jsonify(visualize_monthly_absen(year,month))
 
-@views.route('/weekly-birthday', methods=['POST'])
+@views.route('/weekly-birthday', methods=['POST']) # aku ubah
 def weekly_birthday():
-    return jsonify(get_birthday())
+    if request.method == 'POST':
+        data = request.get_json()
+        weeks_before = data['weeks_before']
+    return jsonify(get_birthday(weeks_before))
 
 @views.route('/today-attendance', methods=['POST'])
 def today_attendance():
@@ -133,10 +137,22 @@ def today_attendance():
 def academic_year():
     return jsonify(add_academic_year())
 
-@views.route('/new-commers', methods=['POST'])
+@views.route('/new-commers', methods=['POST']) # aku ubah
 def new_commers():
-    return jsonify(get_new_commers())
+    if request.method == 'POST':
+        data = request.get_json()
+        weeks_before = data['weeks_before']
+    return jsonify(get_new_commers(weeks_before))
 
-@views.route('/long-absent', methods=['POST'])
+@views.route('/long-absent', methods=['POST']) # aku ubah
 def long_absent():
-    return jsonify(get_absent_more_three())
+    if request.method == 'POST': 
+        data = request.get_json()
+        weeks_before = data['weeks_before']
+    return jsonify(get_long_absent(weeks_before))
+
+
+@views.route('/student-migrate',methods=['POST','GET'])
+def migrate_students():
+    print('MASUK 1')
+    return jsonify(migrate_student())

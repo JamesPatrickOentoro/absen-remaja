@@ -2,12 +2,17 @@
 # from flask_sqlalchemy import SQLAlchemy
 # from flask_cors import CORS
 print("Before importing pandas")
+import os
+import pytz
+from pytz import timezone
 from datetime import datetime, timedelta
 import pandas as pd
 # from werkzeug.security import check_password_hash
 from . import db
 from .models import Admin,Jemaat,Absen
 import calendar
+from sqlalchemy import extract 
+
 # from .main import app
 
 # app = Flask(__name__)
@@ -110,7 +115,11 @@ def add_dummy_data():
         
 def add_jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status):
     # with app.app_context():
-    new_jemaat = Jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, datetime.now())
+    wib = pytz.timezone('Asia/Jakarta')
+
+    # Get the current time in UTC
+    utc_now = datetime.now(pytz.utc)
+    new_jemaat = Jemaat(nama.upper(), no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, utc_now.astimezone(wib))
     db.session.add(new_jemaat)
     db.session.commit()
     return {
@@ -138,6 +147,7 @@ def add_absen(id_jemaat, waktu_absen):
 # Login Admin
 def login_admin(input_nama_admin, input_password):
     # with app.app_context():
+    wib = pytz.timezone('Asia/Jakarta')
     admins = db.session.query(Admin).filter_by(nama_admin=input_nama_admin).all()
     true_admin = None
     for admin in admins:
@@ -145,7 +155,8 @@ def login_admin(input_nama_admin, input_password):
             true_admin = admin
             break
     if true_admin != None:
-        true_admin.last_login = datetime.now()
+        utc_now = datetime.now(pytz.utc)
+        true_admin.last_login = utc_now.astimezone(wib)
         db.session.commit()
         data = {
             'nama_admin':admin.nama_admin,
@@ -423,10 +434,8 @@ def get_all_absen(status=None, nama=None, tanggal=None):
     query = db.session.query(Absen.id_jemaat, Jemaat.nama, Jemaat.status, Absen.waktu_absen).join(Absen, Absen.id_jemaat == Jemaat.id_jemaat)
 
     if status:
-        # query = query.filter(Jemaat.status == status)
         if status.lower() == 'inactive':
-            # Memfilter status yang tidak aktif
-            query = query.filter(Jemaat.status == '-')
+            query = query.filter(Jemaat.status == 'inactive')
         else:
             query = query.filter(Jemaat.status == status)
 
@@ -435,25 +444,31 @@ def get_all_absen(status=None, nama=None, tanggal=None):
         query = query.filter(Jemaat.nama.ilike(f'%{nama}%'))
 
     if tanggal:
-        tanggal_obj = datetime.strptime(tanggal, '%Y-%m-%d').date()
-        # Mendapatkan tanggal, bulan, dan tahun dari objek datetime
+        wib = pytz.timezone('Asia/Jakarta')
+        naive_wib_datetime = datetime.strptime(tanggal, '%Y-%m-%d')
+        tanggal_obj = wib.localize(naive_wib_datetime)
         tahun = tanggal_obj.year
         bulan = tanggal_obj.month
         hari = tanggal_obj.day
-        # Memfilter berdasarkan tanggal, bulan, dan tahun
-        query = query.filter(db.extract('year', Absen.waktu_absen) == tahun,
-                             db.extract('month', Absen.waktu_absen) == bulan,
-                             db.extract('day', Absen.waktu_absen) == hari)
+        query = query.filter(extract('year', Absen.waktu_absen) == tahun,
+                             extract('month', Absen.waktu_absen) == bulan,
+                             extract('day', Absen.waktu_absen) == hari)
 
     abs = query.all()
 
     list_absen = []
+    
     for id_jemaat, nama, status, waktu_absen in abs:
+        if isinstance(waktu_absen, datetime):
+            waktu_absen_formatted = waktu_absen.strftime('%Y-%m-%d %H:%M:%S')
+        else:
+            waktu_absen_formatted = str(waktu_absen)
+            
         data = {
             "id_jemaat": id_jemaat,
             "nama": nama,
             "status": status,
-            "waktu_absen": waktu_absen
+            "waktu_absen": waktu_absen_formatted
         }
         list_absen.append(data)
 
@@ -513,7 +528,9 @@ def get_absen_by_date(date):
     
 def visualize_monthly_absen(year, month):
     # list_absen = []
-    this_month = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d")
+    wib = pytz.timezone('Asia/Jakarta')
+    naive_wib_datetime = datetime.strptime(f"{year}-{month}-01", "%Y-%m-%d")
+    this_month = wib.localize(naive_wib_datetime)
     # print(this_month)
     abs = db.session.query(Absen.id_absen, Absen.waktu_absen).filter(Absen.waktu_absen >= this_month).all()
     # for id_jemaat, waktu_absen in abs:
@@ -551,34 +568,44 @@ def get_all_sundays(year, month):
 
     return all_sundays
 
-def get_birthday():
-    list_jemaat = [] 
-    today = datetime.now().replace(hour=23, minute=59, second=59, microsecond=999999)
+def get_birthday(weeks_before=1):
+    list_jemaat = []
+    wib = pytz.timezone('Asia/Jakarta')
+    utc_now = datetime.now(pytz.utc)
+    today = utc_now.astimezone(wib).replace(hour=23, minute=59, second=59, microsecond=999999)
     abs = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.tgl_lahir).filter(Jemaat.status == 'active').all()
     print(abs)
     if abs == None:
         # print('type after:',type(Jemaat.tgl_lahir))
         return {'status' : 'failed'}
-    last_week = today - timedelta(days=7)
+    last_week = today - timedelta(weeks=weeks_before)
     try:
         for id,nama,tgl in abs:
-            print(nama)
-            print('Masuk 1')
-            print(tgl)
-            if tgl.month == today.month:
-                print('Masuk 2')
-                print(tgl.day, last_week.day, tgl.day, today.day)
-                if tgl.day >= last_week.day and tgl.day <= today.day:
-                    print('Masuk 3')
-                    data = {
-                        'id': id,
-                        'nama': nama,
-                        'tanggal': tgl,
-                        'status' : 'success'
-                    }
-                    list_jemaat.append(data)
+            # print(nama)
+            # print('Masuk 1')
+            # print(tgl)
+            tgl_day_month = (tgl.month, tgl.day)
+            today_day_month = (today.month, today.day)
+            last_week_day_month = (last_week.month, last_week.day)
+            days_in_last_week = [(last_week + timedelta(days=i)).timetuple()[1:3] for i in range(7*weeks_before+1)]
+            print(days_in_last_week)
+            # if last_week <= tgl <= today:
+            # if tgl.month == today.month:
+            #     print('Masuk 2')
+            #     print(tgl.day, last_week.day, tgl.day, today.day)
+            #     if tgl.day >= last_week.day and tgl.day <= today.day:
+            #         print('Masuk 3')
+            if tgl_day_month in days_in_last_week:
+                data = {
+                    'id': id,
+                    'nama': nama,
+                    'tanggal': tgl,
+                    'status' : 'success'
+                }
+                list_jemaat.append(data)
     except:
         pass
+    print(list_jemaat)
     return list_jemaat
 
 def get_all_jemaat():
@@ -619,8 +646,10 @@ def get_all_jemaat():
 #     return all_active_jemaat
 
 def get_all_absent_today():
+    wib = pytz.timezone('Asia/Jakarta')
     absen_jemaat = []
-    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+    utc_now = datetime.now(pytz.utc)
+    today = utc_now.astimezone(wib).replace(hour=0, minute=0, second=0, microsecond=0)
     abs = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).filter(Jemaat.status == 'active').filter(Absen.waktu_absen >= today).all()
     for id, nama, waktu in abs:
         data = {
@@ -650,28 +679,39 @@ def add_academic_year():
     db.session.commit()
     return {'status':'success'}
 
-def get_new_commers():
+def get_new_commers(weeks_before=1):
     new_commers = []
-    today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
-    jemaats = db.session.query(Jemaat.id_jemaat,Jemaat.nama,Jemaat.tgl_daftar).filter(Jemaat.status == 'active').filter(Jemaat.tgl_daftar >= today).all()
+    wib = pytz.timezone('Asia/Jakarta')
+    utc_now = datetime.now(pytz.utc)
+    today = utc_now.astimezone(wib).replace(hour=0, minute=0, second=0, microsecond=0)
+    start_date = today - timedelta(weeks=weeks_before)
+
+    jemaats = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.tgl_daftar)\
+                        .filter(Jemaat.status == 'active')\
+                        .filter(Jemaat.tgl_daftar >= start_date)\
+                        .all()
+    
     for id, nama, tanggal in jemaats:
         data = {
-            'id':id,
-            'nama':nama,
-            'tanggal':tanggal
+            'id': id,
+            'nama': nama,
+            'tanggal': tanggal
         }
         new_commers.append(data)
+    
     return new_commers
 
-def get_absent_more_three():
+def get_long_absent(weeks_before):
     absent = []
-    today = datetime.today()
-    three_weeks_ago = today - timedelta(weeks=3)
-    print(three_weeks_ago)
-    three_weeks_ago_start_of_day = three_weeks_ago.replace(hour=0, minute=0, second=0, microsecond=0)
-    jemaats = db.session.query(Jemaat.id_jemaat,Jemaat.nama,Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).filter(Absen.waktu_absen < three_weeks_ago_start_of_day).filter(Jemaat.status == 'active').all()
+    wib = pytz.timezone('Asia/Jakarta')
+    today_utc = datetime.today()
+    today = wib.localize(today_utc)
+    three_weeks_ago = today - timedelta(weeks=weeks_before)
+    weeks_ago_start_of_day = three_weeks_ago.replace(hour=23, minute=59, second=59, microsecond=999999)
+    print(weeks_ago_start_of_day)
+    jemaats = db.session.query(Jemaat.id_jemaat,Jemaat.nama,Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).filter(Absen.waktu_absen < weeks_ago_start_of_day).filter(Jemaat.status == 'active').all()
     latest_absen = {}
-
+    print(jemaats,'jemaats')
     # Iterate over the results and update the dictionary with the latest waktu_absen for each id_jemaat
     for id_jemaat, nama, waktu_absen in jemaats:
         if id_jemaat not in latest_absen or waktu_absen > latest_absen[id_jemaat]:
@@ -679,7 +719,7 @@ def get_absent_more_three():
 
     # Filter the results to include only the rows with the latest waktu_absen for each id_jemaat
     filtered_jemaats = [(id_jemaat, nama, waktu_absen) for id_jemaat, nama, waktu_absen in jemaats if waktu_absen == latest_absen[id_jemaat]]
-
+    print(filtered_jemaats,'filtered_jemaats')
     # Print the filtered results
     for id_jemaat, nama, waktu_absen in filtered_jemaats:
         data = {
@@ -703,3 +743,29 @@ def get_absent_more_three():
 # print(get_absen_by_tanggal(datetime(2023, 7, 11))) #Success
 # print(get_absen_by_id(1)) #Success
 # edit_data_jemaat
+def migrate_student():
+    print('MASUUKKK')
+    print(os.getcwd())
+    df = pd.read_excel('data_remaja.xlsx')
+    for index, row in df.iterrows():
+        try:
+            nama = row['nama']
+            no_telp = row['nomor']
+            email = row['email']
+            gender = row['gender']
+            hobi = row['hobby']
+            sekolah = row['sekolah']
+            temp_lahir = row['tempat_lahir']
+            tgl_lahir = row['tgl_lahir']
+            no_telp_ortu = ''
+            kelas = row['Kelas']
+            daerah = row['daerah']
+            kecamatan = row['kecamatan']
+            alamat = row['alamat']
+            foto = '' 
+            status = 'active' 
+            add_jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status)
+            print('masuk : ', index)
+        except:
+            pass
+    return {'status':'success'}
