@@ -33,8 +33,8 @@
                 </form>
             </div>
             <div class="migrasi-button">
-                <button id='' class="btn-migrate">
-                    Submit
+                <button id='' class="btn-migrate" v-on:click="migrate">
+                    migrate
                 </button>
             </div>
         </div>
@@ -73,6 +73,15 @@ export default {
                 this.recommendations = response.data;
             } catch (error) {
                 console.error('Error fetching data', error);
+            }
+        },
+       async migrate(){
+        try {
+                const response = await axios.post('absen/student-migrate');
+                console.log('Migrate response:', response.data);
+                // Tambahkan logika untuk menangani respons jika diperlukan
+            } catch (error) {
+                console.error('Error migrating students', error);
             }
         },
         loginStudent() {
