@@ -151,7 +151,6 @@ def long_absent():
         weeks_before = data['weeks_before']
     return jsonify(get_long_absent(weeks_before))
 
-
 @views.route('/student-migrate',methods=['POST','GET'])
 def migrate_students():
     print('MASUK 1')
