@@ -7,7 +7,7 @@
         <div class="pop-log" :class="{ 'show': showPopLogFailed }">
             Login Gagal
         </div>
-        <div class="pop-log" :class="{ 'show': showPopLogUnpicked}">
+        <div class="pop-log" :class="{ 'show': showPopLogUnpicked }">
             Data Belum Dipilih
         </div>
 
@@ -31,6 +31,11 @@
                         </div>
                     </div>
                 </form>
+            </div>
+            <div class="migrasi-button">
+                <button id='' class="btn-migrate">
+                    Submit
+                </button>
             </div>
         </div>
     </div>
@@ -86,16 +91,16 @@ export default {
                     .catch(error => {
                         this.showPopLogFailed = true;
                         setTimeout(() => {
-                            this.showPopLogFailed= false; // Hide pop-up after a short delay
+                            this.showPopLogFailed = false; // Hide pop-up after a short delay
                         }, 1000);
                         console.error('Error submitting form', error);
                     });
                 this.selectedId = null;
             } else {
                 this.showPopLogUnpicked = true;
-                        setTimeout(() => {
-                            this.showPopLogUnpicked = false; // Hide pop-up after a short delay
-                        }, 1000);
+                setTimeout(() => {
+                    this.showPopLogUnpicked = false; // Hide pop-up after a short delay
+                }, 1000);
             }
         },
         onItemSelected(id) {
@@ -190,6 +195,7 @@ export default {
 .pop-log.show {
     display: block;
 }
+
 @media (max-width: 768px) {
     .absen-contain {
         padding: 10px;
@@ -201,8 +207,8 @@ export default {
 
     .pop-log {
         width: 90%;
-        height:30%;
-        padding:18%;
+        height: 30%;
+        padding: 18%;
         align-items: center;
         justify-content: center;
     }
