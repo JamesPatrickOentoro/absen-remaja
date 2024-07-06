@@ -17,7 +17,7 @@ class Jemaat(db.Model):
     kelas = db.Column('kelas',db.Integer)
     daerah = db.Column('daerah',db.String(100))
     kecamatan = db.Column('kecamatan',db.String(100))
-    alamat = db.Column('alamat_lengkap',db.String(100))
+    alamat = db.Column('alamat_lengkap',db.String(1000))
     foto = db.Column('foto_jemaat',db.String(100))
     status = db.Column('status',db.String(100))
     tgl_daftar = db.Column('tanggal_daftar',db.DateTime(timezone=True))
