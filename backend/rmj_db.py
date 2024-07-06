@@ -11,7 +11,7 @@ import pandas as pd
 from . import db
 from .models import Admin,Jemaat,Absen
 import calendar
-from sqlalchemy import extract 
+from sqlalchemy import extract, distinct
 
 # from .main import app
 
@@ -747,25 +747,38 @@ def migrate_student():
     print('MASUUKKK')
     print(os.getcwd())
     df = pd.read_excel('data_remaja.xlsx')
+    print(df)
     for index, row in df.iterrows():
-        try:
-            nama = row['nama']
-            no_telp = row['nomor']
-            email = row['email']
-            gender = row['gender']
-            hobi = row['hobby']
-            sekolah = row['sekolah']
-            temp_lahir = row['tempat_lahir']
-            tgl_lahir = row['tgl_lahir']
-            no_telp_ortu = ''
-            kelas = row['Kelas']
-            daerah = row['daerah']
-            kecamatan = row['kecamatan']
-            alamat = row['alamat']
-            foto = '' 
-            status = 'active' 
-            add_jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status)
-            print('masuk : ', index)
-        except:
-            pass
+        # try:
+        nama = row['nama']
+        no_telp = row['nomor']
+        email = row['email']
+        gender = row['gender']
+        hobi = row['hobby']
+        sekolah = row['sekolah']
+        temp_lahir = row['tempat_lahir']
+        tgl_lahir = row['tgl_lahir']
+        no_telp_ortu = ''
+        kelas = row['kelas']
+        daerah = row['daerah']
+        kecamatan = row['kecamatan']
+        alamat = row['alamat']
+        foto = '' 
+        status = 'active' 
+        add_jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status)
+        print('masuk : ', index)
+        # except:
+        #     print('NOOOOOOOOOOOOOOOOOO')
+        #     pass
     return {'status':'success'}
+
+def get_daerah():
+    daerahs = db.session.query(distinct(Jemaat.daerah)).all()
+    unique_daerah = [d[0] for d in daerahs]
+    return unique_daerah
+    
+
+def get_kecamatan():
+    kecamatans = db.session.query(distinct(Jemaat.kecamatan)).all()
+    unique_daerah = [d[0] for d in kecamatans]
+    return unique_daerah

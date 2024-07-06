@@ -151,6 +151,13 @@ def long_absent():
         weeks_before = data['weeks_before']
     return jsonify(get_long_absent(weeks_before))
 
+@views.route('/get-daerah',methods=['POST','GET'])
+def get_daerah_rute():
+    return jsonify(get_daerah())
+
+@views.route('/get-kecamatan',methods=['POST','GET'])
+def get_kecamatan_rute():
+    return jsonify(get_kecamatan())
 
 @views.route('/student-migrate',methods=['POST','GET'])
 def migrate_students():
