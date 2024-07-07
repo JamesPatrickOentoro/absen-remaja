@@ -66,15 +66,14 @@
         
                     <label for="kecamatan">Kecamatan</label>
                     <select id="kecamatan" class="form-control" v-model="formData.kecamatan"
-                        @change="handleKecamatanChange">
+                        @change="handleSearchKecamatan">
                         <option v-for="option in kecamatanOptions" :key="option" :value="option">
                             {{ option }}
                         </option>
                         <option value="custom">Input Custom Kecamatan</option>
                     </select>
                     <input v-if="showCustomKecamatan" type="text" class="form-control" v-model="customKecamatan"
-                        @input="handleCustomKecamatanInput" placeholder="Enter kecamatan">
-
+                        @input="updateKecamatan" placeholder="Enter kecamatan">
                 </div>
 
 
@@ -150,35 +149,37 @@ export default {
             }
         },
         updateKecamatan(selected) {
-            if (selected && selected.name) {
-                this.formData.kecamatan = selected.name;
-                this.isCustomKecamatan = false;
-            } else {
-                this.formData.kecamatan = selected.toUpperCase();
-                this.isCustomKecamatan = true;
-            }
+            // if (selected && selected.name) {
+            //     this.formData.kecamatan = selected.name;
+            //     this.isCustomKecamatan = false;
+            // } else {
+            //     this.formData.kecamatan = selected.toUpperCase();
+            //     this.isCustomKecamatan = true;
+            // }
+            this.customKecamatan = selected.target.value.toUpperCase();
+            this.formData.kecamatan= this.customKecamatan;
         },
-        handleSearchKecamatan(event) {
-            const selectedValue = event.target.value;
+        handleSearchKecamatan(search) {
+            const selectedValue = search.target.value;
             if (selectedValue === 'custom') {
-                this.showCustomaKecamatan = true;
+                this.showCustomKecamatan = true;
                 this.formData.kecamatan = '';
             } else {
                 this.showCustomKecamatan = false;
                 this.formData.kecamatan = selectedValue;
             }
         },
-        toUpperCaseKecamatan() {
-            this.formData.kecamatan = this.formData.kecamatan.toUpperCase();
-        },
+        // toUpperCaseKecamatan() {
+        //     this.formData.kecamatan = this.formData.kecamatan.toUpperCase();
+        // },
 
         handleDaerahChange(event) {
             const selectedValue = event.target.value;
             if (selectedValue === 'custom') {
-                this.showCustomDaerahInput = true;
+                this.showCustomDaerah = true;
                 this.formData.daerah = '';
             } else {
-                this.showCustomDaerahInput = false;
+                this.showCustomDaerah = false;
                 this.formData.daerah = selectedValue;
             }
         },
