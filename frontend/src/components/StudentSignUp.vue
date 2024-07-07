@@ -56,7 +56,7 @@
                         <option v-for="option in daerahOptions" :key="option" :value="option">
                             {{ option }}
                         </option>
-                        <option value="custom">Input Custom Daerah</option>
+                        <option value="customvalue">Input Custom Daerah</option>
                     </select>
                     <input v-if="showCustomDaerahInput" type="text" class="form-control" v-model="customDaerah"
                         @input="handleCustomDaerahInput" placeholder="Enter custom daerah">
@@ -169,27 +169,24 @@ export default {
                 this.formData.kecamatan = selectedValue;
             }
         },
-        // toUpperCaseKecamatan() {
-        //     this.formData.kecamatan = this.formData.kecamatan.toUpperCase();
-        // },
 
         handleDaerahChange(event) {
             const selectedValue = event.target.value;
-            if (selectedValue === 'custom') {
-                this.showCustomDaerah = true;
+            if (selectedValue === 'customvalue') {
+                this.showCustomDaerahInput = true;
                 this.formData.daerah = '';
             } else {
-                this.showCustomDaerah = false;
+                this.showCustomDaerahInput = false;
                 this.formData.daerah = selectedValue;
             }
         },
-        addCustomDaerah() {
-            if (this.customDaerah && !this.daerahOptions.includes(this.customDaerah)) {
-                this.daerahOptions.push(this.customDaerah);
-                this.formData.daerah = this.customDaerah;
-                this.showCustomDaerahInput = false;
-            }
-        },
+        // addCustomDaerah() {
+        //     if (this.customDaerah && !this.daerahOptions.includes(this.customDaerah)) {
+        //         this.daerahOptions.push(this.customDaerah);
+        //         this.formData.daerah = this.customDaerah;
+        //         this.showCustomDaerahInput = false;
+        //     }
+        // },
         handleCustomDaerahInput(event) {
             this.customDaerah = event.target.value.toUpperCase();
             this.formData.daerah = this.customDaerah;
