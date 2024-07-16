@@ -129,6 +129,14 @@ def weekly_birthday():
         weeks_before = data['weeks_before']
     return jsonify(get_birthday(weeks_before))
 
+@views.route('/month-birthday', methods=['POST']) # aku ubah
+def birthday_by_month():
+    if request.method == 'POST':
+        data = request.get_json()
+        month = data['month']
+    return jsonify(get_birthday_by_month(month))
+
+
 @views.route('/today-attendance', methods=['POST'])
 def today_attendance():
     return jsonify(get_attendance())

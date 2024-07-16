@@ -608,6 +608,29 @@ def get_birthday(weeks_before=1):
     print(list_jemaat)
     return list_jemaat
 
+
+def get_birthday_by_month(month=1):
+    list_jemaat = []
+    abs = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.tgl_lahir).filter(Jemaat.status == 'active').all()
+    print(abs)
+    if abs == None:
+        # print('type after:',type(Jemaat.tgl_lahir))
+        return {'status' : 'failed'}
+    try:
+        for id,nama,tgl in abs:
+            if tgl.month == month:
+                data = {
+                    'id': id,
+                    'nama': nama,
+                    'tanggal': tgl,
+                    'status' : 'success'
+                }
+                list_jemaat.append(data)
+    except:
+        pass
+    print(list_jemaat)
+    return list_jemaat
+
 def get_all_jemaat():
     list_jemaat = []
     jemaat = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.no_telp, Jemaat.email, Jemaat.gender, Jemaat.hobi, Jemaat.sekolah, Jemaat.temp_lahir, Jemaat.tgl_lahir, Jemaat.no_telp_ortu, Jemaat.kelas, Jemaat.daerah, Jemaat.kecamatan, Jemaat.alamat, Jemaat.foto, Jemaat.status, Jemaat.tgl_daftar).all()
