@@ -125,7 +125,7 @@ def monthly_absent():
 @views.route('/weekly-birthday', methods=['POST']) # aku ubah
 def weekly_birthday():
     if request.method == 'POST':
-        print('haihai')
+        # print('haihai')
         data = request.get_json()
         weeks_before = data['weeks_before']
     return jsonify(get_birthday(weeks_before))
