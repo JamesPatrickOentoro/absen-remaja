@@ -2,10 +2,10 @@
     <HeaderBefore></HeaderBefore>
     <div class="absen-container">
         <div class="pop-log" :class="{ 'show': showPopLog }">
-            Login Berhasil
+            Absen Berhasil
         </div>
         <div class="pop-log" :class="{ 'show': showPopLogFailed }">
-            Login Gagal
+            Absen Gagal
         </div>
         <div class="pop-log" :class="{ 'show': showPopLogUnpicked }">
             Data Belum Dipilih

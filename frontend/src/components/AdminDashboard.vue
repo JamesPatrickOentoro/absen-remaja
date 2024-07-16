@@ -14,7 +14,14 @@
 
             <!-- New Comers -->
             <div class="new-comer-container">
-                <h2>New Comers</h2>
+                <h2>New Commers</h2>
+                <div class="head_filter">
+                    <select v-model="selectedWeek" class="select">
+                        <option disabled selected value="">Week</option>
+                        <option v-for="week in weeks" :key="week">{{ week }}</option>
+                    </select>
+                    <button @click="fetchNewCommers" class="button">Generate</button>
+                </div>
                 <div class="new-comer-content">
                     <div class="new-comer-elements">
                         <div v-for="newComer in newCommers" :key="newComer.id" class="new-comer-card">
@@ -68,11 +75,16 @@
             <!-- Birthdays -->
             <div class="new-comer-container">
                 <h2>Birthdays</h2>
+                <select v-model="selectedWeek" class="select">
+                    <option disabled selected value="">Week</option>
+                    <option v-for="week in weeks" :key="week">{{ week }}</option>
+                </select>
+                <button @click="fetchBirthdays" class="button">Generate</button>
                 <div class="new-comer-content">
                     <div class="new-comer-elements">
                         <div v-for="birthday in studentBirthdays" :key="birthday.id" class="new-comer-card">
                             <p>{{ birthday.nama }}</p>
-                            <p>{{ formatDate(birthday.tanggal) }}</p>
+                            <p>{{ birthday.tanggal }}</p>
                         </div>
                     </div>
                 </div>
@@ -89,8 +101,10 @@ export default {
     data() {
         return {
             selectedYear: '',
+            selectedWeek: 1,
             selectedMonth: '',
             years: [], // Add years as needed
+            weeks: [1, 2, 3, 4],
             months: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
             chart: null,
             absent: 0,
@@ -137,6 +151,7 @@ export default {
                 this.years.push(year.toString());
             }
         },
+
         fetchMonthlyAbsentData() {
             const year = this.selectedYear;
             const monthIndex = this.selectedMonth - 1;
@@ -144,7 +159,7 @@ export default {
             console.log(month)
             console.log(year)
 
-            axios.post('/absen/monthly-absent', { year, month })
+            axios.post('absen/monthly-absent', { year, month })
                 .then(response => {
                     console.log('Data fetched:', response.data);
 
@@ -161,6 +176,29 @@ export default {
                 })
                 .catch(error => {
                     console.error('Error fetching monthly absent data:', error);
+                });
+        },
+        fetchBirthdays() {
+            const weeksBefore = parseInt(this.selectedWeek); // Pastikan weeksBefore diubah menjadi integer
+
+            axios.post('absen/weekly-birthday', { weeks_before: weeksBefore })
+                .then(response => {
+                    // Proses respons dari backend
+                    console.log('Raw response:', response.data);
+
+                    if (Array.isArray(response.data)) {
+                        this.studentBirthdays = response.data.map(birthday => ({
+                            id: birthday.id,
+                            nama: birthday.nama,
+                            tanggal: this.formatDate(birthday.tanggal)
+                        }));
+                    } else {
+                        console.error('Invalid response format');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching birthdays', error);
+                    // Handle error here
                 });
         },
         renderChart(jumlah, minggu) {
@@ -204,13 +242,34 @@ export default {
                 });
         },
         fetchNewCommers() {
-            axios.post('absen/new-commers')
+            // axios.post('absen/new-commers')
+            //     .then(response => {
+            //         this.newCommers = response.data;
+            //         console.log(this.newCommers);
+            //     })
+            //     .catch(error => {
+            //         console.error('Error fetching new commers:', error);
+            //     });
+            const weeksBefore = parseInt(this.selectedWeek); // Pastikan weeksBefore diubah menjadi integer
+
+            axios.post('absen/new-commers', { weeks_before: weeksBefore })
                 .then(response => {
-                    this.newCommers = response.data;
-                    console.log(this.newCommers);
+                    // Proses respons dari backend
+                    console.log('Raw response:', response.data);
+
+                    if (Array.isArray(response.data)) {
+                        this.newCommers = response.data.map(neo_commers => ({
+                            id: neo_commers.id,
+                            nama: neo_commers.nama,
+                            tanggal: this.formatDate(neo_commers.tanggal)
+                        }));
+                    } else {
+                        console.error('Invalid response format');
+                    }
                 })
                 .catch(error => {
-                    console.error('Error fetching new commers:', error);
+                    console.error('Error fetching neo commers', error);
+                    // Handle error here
                 });
         },
         fetchAbsentStudents() {
@@ -226,25 +285,16 @@ export default {
                 )
         },
         formatDate(dateString) {
-            const date = new Date(dateString);
-            const day = date.getDate().toString().padStart(2, '0');
-            const month = (date.getMonth() + 1).toString().padStart(2, '0');
-            const year = date.getFullYear();
-            return `${day}/${month}/${year}`;
-        },
-        fetchBirthdays() {
-            axios.post('absen/weekly-birthday').then(
-                response => {
-                    this.studentBirthdays = response.data;
-                    console.log(this.studentBirthdays)
-                })
-                .catch(
-                    error => {
-                        console.error('Error fetching birthdays', error);
-                    }
-                )
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString(undefined, options);
+            // const date = new Date(dateString);
+            // const day = date.getDate().toString().padStart(2, '0');
+            // const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            // const year = date.getFullYear();
+            // return `${day}/${month}/${year}`;
         }
     },
+
 };
 </script>
 
