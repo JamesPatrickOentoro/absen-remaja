@@ -137,7 +137,6 @@ def birthday_by_month():
         month = data['month']
     return jsonify(get_birthday_by_month(month))
 
-
 @views.route('/today-attendance', methods=['POST'])
 def today_attendance():
     return jsonify(get_attendance())

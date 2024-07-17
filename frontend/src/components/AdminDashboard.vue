@@ -59,14 +59,18 @@
 
         <!-- Right side -->
         <div class="dashboard-column">
-            <!-- Absent Students -->
             <div class="new-comer-container">
                 <h2>Absent Students</h2>
+                <select v-model="selectedWeek" class="select">
+                    <option disabled selected value="">Week</option>
+                    <option v-for="week in weeks" :key="week">{{ week }}</option>
+                </select>
+                <button @click="fetchAbsentStudents" class="button">Generate</button>
                 <div class="new-comer-content">
                     <div class="new-comer-elements">
                         <div v-for="absentStudent in absentStudents" :key="absentStudent.id" class="new-comer-card">
                             <p>{{ absentStudent.nama }}</p>
-                            <p>{{ formatDate(absentStudent.waktu_absen) }}</p>
+                            <p>{{ absentStudent.waktu_absen }}</p>
                         </div>
                     </div>
                 </div>
@@ -78,6 +82,10 @@
                 <select v-model="selectedWeek" class="select">
                     <option disabled selected value="">Week</option>
                     <option v-for="week in weeks" :key="week">{{ week }}</option>
+                </select>
+                <select v-model="selectedMonth" class="select">
+                    <option disabled selected value="">Month</option>
+                    <option v-for="(month, index) in months" :key="index" :value="index + 1">{{ month }}</option>
                 </select>
                 <button @click="fetchBirthdays" class="button">Generate</button>
                 <div class="new-comer-content">
@@ -273,16 +281,27 @@ export default {
                 });
         },
         fetchAbsentStudents() {
-            axios.post('absen/long-absent').then(
-                response => {
-                    this.absentStudents = response.data;
-                    console.log(this.absentStudents)
-                })
-                .catch(
-                    error => {
-                        console.error('Error fetching absents', error);
+            const weeksBefore = parseInt(this.selectedWeek); // Pastikan weeksBefore diubah menjadi integer
+
+            axios.post('absen/long-absent', { weeks_before: weeksBefore })
+                .then(response => {
+                    // Proses respons dari backend
+                    console.log('Raw response:', response.data);
+
+                    if (Array.isArray(response.data)) {
+                        this.absentStudents = response.data.map(absent => ({
+                            id: absent.id,
+                            nama: absent.nama,
+                            waktu_absen: this.formatDate(absent.waktu_absen)
+                        }));
+                    } else {
+                        console.error('Invalid response format');
                     }
-                )
+                })
+                .catch(error => {
+                    console.error('Error fetching neo commers', error);
+                    // Handle error here
+                });
         },
         formatDate(dateString) {
             const options = { year: 'numeric', month: 'short', day: 'numeric' };
