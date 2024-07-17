@@ -83,10 +83,10 @@
                     <option disabled selected value="">Week</option>
                     <option v-for="week in weeks" :key="week">{{ week }}</option>
                 </select>
-                <select v-model="selectedMonth" class="select">
+                <!-- <select v-model="selectedMonth" class="select">
                     <option disabled selected value="">Month</option>
                     <option v-for="(month, index) in months" :key="index" :value="index + 1">{{ month }}</option>
-                </select>
+                </select> -->
                 <button @click="fetchBirthdays" class="button">Generate</button>
                 <div class="new-comer-content">
                     <div class="new-comer-elements">
