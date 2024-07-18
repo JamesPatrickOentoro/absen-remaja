@@ -140,7 +140,6 @@ def birthday_by_range():
         end_date = data['end_date']
     return jsonify(get_birthday_by_range(start_month,start_date,end_month,end_date))
 
-
 @views.route('/today-attendance', methods=['POST'])
 def today_attendance():
     return jsonify(get_attendance())
