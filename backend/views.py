@@ -130,12 +130,15 @@ def weekly_birthday():
         weeks_before = data['weeks_before']
     return jsonify(get_birthday(weeks_before))
 
-@views.route('/month-birthday', methods=['POST']) # aku ubah
-def birthday_by_month():
+@views.route('/range-birthday', methods=['POST']) # aku ubah
+def birthday_by_range():
     if request.method == 'POST':
         data = request.get_json()
-        month = data['month']
-    return jsonify(get_birthday_by_month(month))
+        start_month = data['start_month']
+        end_month = data['end_month']
+        start_date = data['start_date']
+        end_date = data['end_date']
+    return jsonify(get_birthday_by_range(start_month,start_date,end_month,end_date))
 
 
 @views.route('/today-attendance', methods=['POST'])

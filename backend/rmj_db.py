@@ -11,7 +11,7 @@ import pandas as pd
 from . import db
 from .models import Admin,Jemaat,Absen
 import calendar
-from sqlalchemy import extract, distinct
+from sqlalchemy import extract, distinct, between
 
 # from .main import app
 
@@ -608,17 +608,36 @@ def get_birthday(weeks_before=1):
     print(list_jemaat)
     return list_jemaat
 
+def generate_dates(start_month, start_date, end_month, end_date):
+    start = datetime(2024, start_month, start_date)  # Use a leap year like 2024 to handle February 29
+    end = datetime(2024, end_month, end_date)
+    
+    if end < start:
+        end = datetime(2025, end_month, end_date)  # Handle date ranges crossing the year boundary
 
-def get_birthday_by_month(month=1):
+    delta = end - start
+    
+    dates = [(start + timedelta(days=i)).strftime("%m-%d") for i in range(delta.days + 1)]
+    
+    return dates
+
+def get_birthday_by_range(start_month,start_date,end_month,end_date):
     list_jemaat = []
-    abs = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.tgl_lahir).filter(Jemaat.status == 'active').all()
-    print(abs)
+    dates = generate_dates(start_month, start_date, end_month, end_date)
+    print(dates)
+    abs = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.tgl_lahir)\
+        .filter(Jemaat.status == 'active')\
+        .all()
+    # print(abs)
     if abs == None:
         # print('type after:',type(Jemaat.tgl_lahir))
         return {'status' : 'failed'}
     try:
+        # print('MASUK1')
         for id,nama,tgl in abs:
-            if tgl.month == month:
+            formatted_date = f"{tgl.month:02d}-{tgl.day:02d}"
+            # print(formatted_date,'BENER')
+            if formatted_date in dates:
                 data = {
                     'id': id,
                     'nama': nama,
