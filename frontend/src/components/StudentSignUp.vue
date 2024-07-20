@@ -1,5 +1,6 @@
 <template>
     <div class="form-container">
+        
         <h1 style="text-align: center;"> Registration</h1>
         <div class="form-group">
             <form @submit.prevent="registerStudent">
@@ -49,7 +50,6 @@
                     <label for="nama">Alamat</label>
                     <input type="text" id="name" class="form-control" v-model="formData.alamat" required>
                 </div>
-
                 <div class="form-group">
                     <label for="daerah">Daerah</label>
                     <select id="daerah" class="form-control" v-model="formData.daerah" @change="handleDaerahChange">
@@ -61,7 +61,6 @@
                     <input v-if="showCustomDaerahInput" type="text" class="form-control" v-model="customDaerah"
                         @input="handleCustomDaerahInput" placeholder="Enter custom daerah">
                 </div>
-
                 <div class="form-group">
         
                     <label for="kecamatan">Kecamatan</label>
@@ -75,8 +74,6 @@
                     <input v-if="showCustomKecamatan" type="text" class="form-control" v-model="customKecamatan"
                         @input="updateKecamatan" placeholder="Enter kecamatan">
                 </div>
-
-
                 <div class="form-group">
                     <label for="nama">No.Telp Orangtua</label>
                     <input type="tel" id="name" class="form-control" v-model="formData.no_telp_ortu"
@@ -87,7 +84,6 @@
             </form>
         </div>
     </div>
-    <!-- </div> -->
 </template>
 
 <script>
@@ -124,7 +120,8 @@ export default {
             showCustomDaerahInput: false,
             kecamatanOptions: [],
             customKecamatan: '',
-            showCustomKecamatan: false
+            showCustomKecamatan: false,
+            showPopSuccessRegister: false
         };
     },
     mounted() {
@@ -149,13 +146,7 @@ export default {
             }
         },
         updateKecamatan(selected) {
-            // if (selected && selected.name) {
-            //     this.formData.kecamatan = selected.name;
-            //     this.isCustomKecamatan = false;
-            // } else {
-            //     this.formData.kecamatan = selected.toUpperCase();
-            //     this.isCustomKecamatan = true;
-            // }
+           
             this.customKecamatan = selected.target.value.toUpperCase();
             this.formData.kecamatan= this.customKecamatan;
         },
@@ -180,13 +171,7 @@ export default {
                 this.formData.daerah = selectedValue;
             }
         },
-        // addCustomDaerah() {
-        //     if (this.customDaerah && !this.daerahOptions.includes(this.customDaerah)) {
-        //         this.daerahOptions.push(this.customDaerah);
-        //         this.formData.daerah = this.customDaerah;
-        //         this.showCustomDaerahInput = false;
-        //     }
-        // },
+    
         handleCustomDaerahInput(event) {
             this.customDaerah = event.target.value.toUpperCase();
             this.formData.daerah = this.customDaerah;
@@ -211,12 +196,22 @@ export default {
                     status: this.formData.status// Set status to 'active' by default
                 });
                 console.log('Response:', res.data);
-                console.log('success masuk')
+                console.log('success masuk');
+                alert('pendaftaran berhasil')
+                // this.showSuccessPopup();
+                // this.$emit('registration-success');
                 this.closeForm();
 
             } catch (error) {
                 console.error('Error submitting form:', error);
             }
+        },
+        showSuccessPopup() {
+            this.showPopSuccessRegister = true;
+            console.log("Pop-up should show now");
+            setTimeout(() => {
+                this.showPopSuccessRegister = false;
+            }, 1000);
         },
 
         closeForm() {
@@ -240,6 +235,7 @@ export default {
             },
                 this.selectedDaerah = '';
             this.selectedKecamatan = '';
+            this.showSuccessPopup();
         },
     }
 };
@@ -280,5 +276,29 @@ export default {
 /* Customize radio buttons */
 .form-check-input {
     left: 20px;
+}
+
+.popup.show {
+    display: block;
+    opacity: 100%;
+} 
+
+.popup{
+    top: 20%; 
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: rgb(255, 253, 253);
+    border-radius: 8px;
+    box-shadow: 0 0 200px rgba(0, 0, 0, 0.5);
+    padding: 60px; 
+    z-index:1000;
+    opacity: 0;
+}
+@media (max-width: 768px){
+    .form-container{
+        margin-top: 15%;
+        max-height: 500px;
+    }
 }
 </style>

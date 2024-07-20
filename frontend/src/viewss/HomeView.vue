@@ -10,6 +10,11 @@
         <div class="pop-log" :class="{ 'show': showPopLogUnpicked }">
             Data Belum Dipilih
         </div>
+        <div class="pop-log" :class="{ 'show': showPopSuccessRegister }">
+            Pendaftaran Berhasil
+            <StudentSignUp @registration-success="showSuccessPopup" />
+        </div>
+        
 
         <div class="absen-contain">
             <div class="absen-catalogue" id="absen-cards">
@@ -41,11 +46,12 @@
 import SearchAutocomplete from '@/components/SearchAutocomplete.vue'
 import axios from 'axios';
 import HeaderBefore from '@/components/HeaderBefore.vue';
+import StudentSignUp from '@/components/StudentSignUp.vue';
 
 export default {
     name: 'HomeView',
     components: {
-        HeaderBefore, SearchAutocomplete,
+        HeaderBefore, SearchAutocomplete,StudentSignUp
     },
     data() {
         return {
@@ -57,6 +63,7 @@ export default {
             showPopLog: false,
             showPopLogFailed: false,
             showPopLogUnpicked: false,
+            showPopSuccessRegister: false,
         };
     },
     mounted() {
@@ -71,15 +78,12 @@ export default {
                 console.error('Error fetching data', error);
             }
         },
-    //    async migrate(){
-    //     try {
-    //             const response = await axios.post('absen/student-migrate');
-    //             console.log('Migrate response:', response.data);
-    //             // Tambahkan logika untuk menangani respons jika diperlukan
-    //         } catch (error) {
-    //             console.error('Error migrating students', error);
-    //         }
-    //     },
+        showSuccessPopup() {
+            this.showPopSuccessRegister = true;
+            setTimeout(() => {
+                this.showPopSuccessRegister = false;
+            }, 1000);
+        },
         loginStudent() {
             console.log(this.selectedId)
             if (this.selectedId !== null) {
@@ -114,7 +118,8 @@ export default {
         },
         navigateToAdmin() {
             this.$router.push('/admin-view')
-        }
+        },
+
     },
 };
 
@@ -203,7 +208,8 @@ export default {
 
 @media (max-width: 768px) {
     .absen-contain {
-        padding: 10px;
+        padding: 20px;
+        overflow-y: auto
     }
 
     .btn-submit {
