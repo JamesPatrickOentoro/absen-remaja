@@ -1,40 +1,47 @@
 <template>
   <div class="header-attendance-container">
     <div class="attend">
-      <h3>Students</h3>
+      
+      <div class="header-container">
+        <h3>Students</h3>
+        <div class="button-group">
+          <button @click="generateSheet" class="btn btn-success export-button">Export to Excel</button>
+          <button @click="confirmUpdateAcademicYear" class="btn btn-warning update-button">Update Academic Year</button>
+        </div>
+      </div>
 
       <div class="table-container-attendance">
-          <table class="table-sticky">
-            <thead style="position: sticky; top: 0; background: #ccc;">
-              <tr>
-                <th scope="col">Student Name</th>
-                <th scope="col">Birthdate</th>
-                <th scope="col">Class</th>
-                <th scope="col">Phone</th>
-                <th scope="col">Gender</th>
-                <th scope="col">Status</th>
-                <th scope="col">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(student, index) in students" :key="index">
-                <td>{{ student.nama }}</td>
-                <td>{{ formatDate(student.tgl_lahir) }}</td>
-                <td>{{ student.kelas }}</td>
-                <td>{{ student.no_telp }}</td>
-                <td>{{ student.gender }}</td>
-                <td>{{ student.status }}</td>
-                <td>
-                  <button @click="editStudent(student)" class="btn btn-primary">
-                    <i class="bi bi-pencil-square"></i>
-                  </button>
-                  <button @click="deleteStudent(student.id_jemaat)" class="btn btn-danger">
-                    <i class="bi bi-trash"></i>
-                  </button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <table class="table-sticky">
+          <thead style="position: sticky; top: 0; background: #ccc;">
+            <tr>
+              <th scope="col">Student Name</th>
+              <th scope="col">Birthdate</th>
+              <th scope="col">Class</th>
+              <th scope="col">Phone</th>
+              <th scope="col">Gender</th>
+              <th scope="col">Status</th>
+              <th scope="col">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr v-for="(student, index) in students" :key="index">
+              <td>{{ student.nama }}</td>
+              <td>{{ formatDate(student.tgl_lahir) }}</td>
+              <td>{{ student.kelas }}</td>
+              <td>{{ student.no_telp }}</td>
+              <td>{{ student.gender }}</td>
+              <td>{{ student.status }}</td>
+              <td>
+                <button @click="editStudent(student)" class="btn btn-primary">
+                  <i class="bi bi-pencil-square"></i>
+                </button>
+                <button @click="deleteStudent(student.id_jemaat)" class="btn btn-danger">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <div v-if="showEditModal" class="modalform">
@@ -45,42 +52,49 @@
           <form @submit.prevent="submitEditForm">
             <div class="form-group">
               <label for="edit-name">Name:</label>
-              <input type="text" id="edit-name" v-model="editedStudent.nama" class="form-control" placeholder="Enter name">
+              <input type="text" id="edit-name" v-model="editedStudent.nama" class="form-control"
+                placeholder="Enter name">
             </div>
             <div class="form-group">
               <label for="edit-birth">Tanggal Lahir:</label>
-              <input type="datetime-local" id="edit-birth" v-model="editedStudent.tgl_lahir" class="form-control" placeholder="Enter date of birth">
+              <input type="datetime-local" id="edit-birth" v-model="editedStudent.tgl_lahir" class="form-control"
+                placeholder="Enter date of birth">
             </div>
             <div class="form-group">
               <label for="edit-email">Email:</label>
-              <input type="email" id="edit-email" v-model="editedStudent.email" class="form-control" placeholder="Enter email">
+              <input type="email" id="edit-email" v-model="editedStudent.email" class="form-control"
+                placeholder="Enter email">
             </div>
             <div class="form-group">
               <label for="edit-alamat">Alamat:</label>
-              <input type="text" id="edit-alamat" v-model="editedStudent.alamat" class="form-control" placeholder="Enter alamat">
+              <input type="text" id="edit-alamat" v-model="editedStudent.alamat" class="form-control"
+                placeholder="Enter alamat">
             </div>
             <div class="form-group">
               <label for="edit-kelas">Kelas:</label>
-              <input type="number" id="edit-kelas" v-model="editedStudent.kelas" class="form-control" placeholder="Enter kelas">
+              <input type="number" id="edit-kelas" v-model="editedStudent.kelas" class="form-control"
+                placeholder="Enter kelas">
             </div>
             <div class="form-group">
               <label for="edit-notelp">Nomor Telpon:</label>
-              <input type="number" id="edit-notelp" v-model="editedStudent.no_telp" class="form-control" placeholder="Enter nomor telpon">
+              <input type="number" id="edit-notelp" v-model="editedStudent.no_telp" class="form-control"
+                placeholder="Enter nomor telpon">
             </div>
             <button type="submit" class="btn btn-success">Save</button>
           </form>
         </div>
       </div>
     </div>
-    <div class="update-academic-year">
-      <button @click= "confirmUpdateAcademicYear" class="btn btn-warning">
+    <!-- <div class="update-academic-year">
+      <button @click="confirmUpdateAcademicYear" class="btn btn-warning">
         Update Academic Year
       </button>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
+import * as XLSX from 'xlsx';
 import axios from 'axios';
 
 export default {
@@ -209,7 +223,16 @@ export default {
         .catch(error => {
           console.error('Error deleting student:', error);
         });
-    }
+    },
+    saveToExcel(data) {
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Students-Sheet');
+      XLSX.writeFile(wb, 'data-remaja.xlsx');
+    },
+    generateSheet() {
+      this.saveToExcel(this.students);
+    },
   }
 };
 </script>
@@ -229,50 +252,63 @@ export default {
 .attend {
   margin: 0 auto;
 }
+.header-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
 
 .table-container-attendance {
-  max-height: 60vh; /* Set a fixed height */
-  overflow-y: auto; /* Enable vertical scrolling */
+  max-height: 60vh;
+  /* Set a fixed height */
+  overflow-y: auto;
+  /* Enable vertical scrolling */
 }
 
 .table-sticky {
   width: 100%;
-  border-collapse: collapse;
+  border:#444444 solid 1px;
 }
 
 .modalform {
-    display: block !important;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
+  display: block !important;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
 }
 
 .modal-content-section {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: #fefefe;
-    padding: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fefefe;
+  padding: 20px;
 }
 
 /* Close button styles */
 .close {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    cursor: pointer;
-    font-size: 20px;
-    color: #aaa;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  cursor: pointer;
+  font-size: 20px;
+  color: #aaa;
 }
 
 .close:hover,
 .close:focus {
-    color: #000;
+  color: #000;
 }
 
 .table-sticky th,
@@ -282,8 +318,42 @@ export default {
   text-align: left;
 }
 
-.table-sticky th {
+/* .table-sticky th {
   background-color: #f4f4f4;
+  border: 1px solid #ddd;
+}
+
+.table-sticky tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+.table-sticky tbody tr:hover {
+  background-color: #f1f1f1;
+} */
+.table-container-attendance {
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.table-sticky {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed;
+}
+
+.table-sticky th {
+  position: sticky;
+  top: 0;
+  background-color: #f4f4f4;
+  z-index: 1;
+  text-align: left;
+  padding: 12px 15px;
+  border: 1px solid #ddd;
+}
+
+.table-sticky td {
+  padding: 12px 15px;
+  border: 1px solid #ddd;
 }
 
 .table-sticky tbody tr:nth-child(even) {
@@ -293,36 +363,37 @@ export default {
 .table-sticky tbody tr:hover {
   background-color: #f1f1f1;
 }
+
 /* Form input styles */
 form label {
-    display: block;
-    margin-bottom: 5px;
+  display: block;
+  margin-bottom: 5px;
 }
 
 form input[type="text"] {
-    width: 100%;
-    padding: 8px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
 }
 
 /* Submit button styles */
 form button {
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 form button:hover {
-    background-color: #0056b3;
+  background-color: #0056b3;
 }
 
-.update-academic-year{
+.update-academic-year {
   margin-top: 20px;
 }
 
@@ -344,5 +415,4 @@ form button:hover {
     padding: 5px;
   }
 }
-
-</style> 
+</style>
