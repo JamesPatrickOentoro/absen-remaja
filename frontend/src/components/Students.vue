@@ -1,7 +1,7 @@
 <template>
   <div class="header-attendance-container">
     <div class="attend">
-      
+
       <div class="header-container">
         <h3>Students</h3>
         <div class="button-group">
@@ -55,11 +55,16 @@
               <input type="text" id="edit-name" v-model="editedStudent.nama" class="form-control"
                 placeholder="Enter name">
             </div>
-            <div class="form-group">
+            <!-- <div class="form-group">
               <label for="edit-birth">Tanggal Lahir:</label>
               <input type="datetime-local" id="edit-birth" v-model="editedStudent.tgl_lahir" class="form-control"
                 placeholder="Enter date of birth">
+            </div> -->
+            <div class="form-group">
+              <label for="edit-birth">Tanggal Lahir:</label>
+              <input type="date" id="edit-birth" v-model="editedStudent.tgl_lahir" class="form-control" />
             </div>
+
             <div class="form-group">
               <label for="edit-email">Email:</label>
               <input type="email" id="edit-email" v-model="editedStudent.email" class="form-control"
@@ -96,6 +101,9 @@
 <script>
 import * as XLSX from 'xlsx';
 import axios from 'axios';
+import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
+dayjs.extend(utc);
 
 export default {
   name: 'StudentsList',
@@ -144,27 +152,47 @@ export default {
     async fetchStudents() {
       try {
         const response = await axios.get('absen/all-students');
-        console.log(response);
-        this.students = response.data;
+        console.log("Fetched Students Data:", response.data);
+        this.students = response.data.map(student => ({
+          ...student,
+          tgl_lahir: this.formatDateToYMD(student.tgl_lahir) || '1970-01-01', // Gunakan default jika tidak valid
+        }));
       } catch (error) {
-        console.error('Error fetching absents:', error);
+        console.error('Error fetching students:', error);
       }
     },
-    formatDate(dateString) {
-      const date = new Date(dateString);
-      const day = date.getDate().toString().padStart(2, '0');
-      const month = (date.getMonth() + 1).toString().padStart(2, '0');
-      const year = date.getFullYear();
-      return `${day}-${month}-${year}`;
+
+    // formatDate(dateString) {
+    //   const date = dayjs(dateString); // Parsing otomatis
+    //   if (!date.isValid()) {
+    //     console.error("Invalid date format:", dateString);
+    //     return dateString; // Kembalikan nilai asli jika tidak valid
+    //   }
+    //   // Format ke format human-readable
+    //   return date.format('ddd, DD MMM YYYY HH:mm:ss [UTC]');
+    // },
+
+    formatDateToYMD(dateString) {
+      // Gunakan dayjs untuk parsing
+      let date = dayjs(dateString, ['YYYY-MM-DD', 'ddd, DD MMM YYYY HH:mm:ss Z']);
+      if (!date.isValid()) {
+        console.error("Invalid date format:", dateString);
+        return '1970-01-01'; // Nilai default jika parsing gagal
+      }
+      return date.format('YYYY-MM-DD'); // Format menjadi 'YYYY-MM-DD'
     },
+
     closeEditModal() {
       this.showEditModal = false;
     },
+
     confirmUpdateAcademicYear() {
       if (confirm("Are you sure you want to update the academic year? This action cannot be undone.")) {
         this.updateAcademicYear();
       }
     },
+
+
     updateAcademicYear() {
 
       axios.post('absen/academic-year')
@@ -185,36 +213,30 @@ export default {
       this.editedStudent = { ...student };
       this.showEditModal = true;
     },
+
     submitEditForm() {
-      axios.post('absen/edit-data-jemaat', this.editedStudent)
-        .then(() => {
-          const updatedStudentIndex = this.students.findIndex(student => student.id_jemaat === this.editedStudent.id_jemaat);
-          if (updatedStudentIndex !== -1) {
-            this.students[updatedStudentIndex] = { ...this.editedStudent };
-          }
-          this.showEditModal = false;
-          this.editedStudent = {
-            nama: '',
-            email: '',
-            no_telp: '',
-            gender: '',
-            hobi: '',
-            sekolah: '',
-            tgl_lahir: '',
-            temp_lahir: '',
-            no_telp_ortu: '',
-            kelas: '',
-            daerah: '',
-            kecamatan: '',
-            alamat: '',
-            foto: 'nanana',
-            status: ''
-          };
-        })
-        .catch(error => {
-          console.error('Error updating student data:', error);
-        });
+      if (this.editedStudent.tgl_lahir) {
+        this.editedStudent.tgl_lahir = this.formatDateToYMD(this.editedStudent.tgl_lahir);
+      }
+
+      if (this.editedStudent.tgl_lahir) {
+    // Ubah ke format yang diharapkan server
+    this.editedStudent.tgl_lahir = dayjs(this.editedStudent.tgl_lahir).format('ddd, DD MMM YYYY HH:mm:ss [GMT]');
+  }
+
+  axios.post('absen/edit-data-jemaat', this.editedStudent)
+    .then(() => {
+      const updatedStudentIndex = this.students.findIndex(student => student.id_jemaat === this.editedStudent.id_jemaat);
+      if (updatedStudentIndex !== -1) {
+        this.students[updatedStudentIndex] = { ...this.editedStudent };
+      }
+      this.showEditModal = false;
+    })
+    .catch(error => {
+      console.error('Error updating student data:', error);
+    });
     },
+
     deleteStudent(studentId) {
       axios.delete(`absen/delete-jemaat?id_jemaat=${studentId}`)
         .then(() => {
@@ -252,6 +274,7 @@ export default {
 .attend {
   margin: 0 auto;
 }
+
 .header-container {
   display: flex;
   justify-content: space-between;
@@ -273,7 +296,7 @@ export default {
 
 .table-sticky {
   width: 100%;
-  border:#444444 solid 1px;
+  border: #444444 solid 1px;
 }
 
 .modalform {

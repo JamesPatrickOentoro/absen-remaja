@@ -46,7 +46,7 @@ if __name__ == '__main__':
     from .models import Jemaat, Absen, Admin
 
     # create_database(app)
-
+    app.run(debug=True)
     if not path.exists('backend/' + DB_NAME):
         db.create_all()
         print('Database Created!')

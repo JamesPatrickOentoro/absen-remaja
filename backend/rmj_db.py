@@ -345,10 +345,34 @@ def get_absen_by_name(name):
 #     return list_absen
     
 # Edit Data Jemaat #COBA
-def edit_data_jemaat(id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status):
-    # with app.app_context():
+def parse_date(date_string):
+    """Coba beberapa format tanggal."""
+    for fmt in ('%a, %d %b %Y %H:%M:%S %Z', '%Y-%m-%d'):
+        try:
+            return datetime.strptime(date_string, fmt).strftime('%Y-%m-%d')
+        except ValueError:
+            continue
+    raise ValueError(f"Invalid date format: {date_string}")
+
+def edit_data_jemaat(
+    
+    id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, 
+    no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status
+):
+    print(nama, "NAMAAAAAAAA")
     jemaat = db.session.query(Jemaat).filter(Jemaat.id_jemaat == id_jemaat).first()
+    print(jemaat)
+    
+    if not jemaat:
+        return {
+            'status': 'failed',
+            'message': 'Record not found'
+        }
+
     try:
+        print(id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas)
+        # tgl_lahir = datetime.strptime(tgl_lahir, '%a, %d %b %Y %H:%M:%S %Z').strftime('%Y-%m-%d')
+        tgl_lahir = parse_date(tgl_lahir).strftime('%Y-%m-%d')
         jemaat.nama = nama
         jemaat.no_telp = no_telp
         jemaat.email = email
@@ -364,16 +388,21 @@ def edit_data_jemaat(id_jemaat, nama, no_telp, email, gender, hobi, sekolah, tem
         jemaat.alamat = alamat
         jemaat.foto = foto
         jemaat.status = status
+
+        print("All fields updated successfully.")
         db.session.commit()
+        print("Changes committed successfully.")
 
         return {
-            'status':'success'
+            'status': 'success'
         }
-    except:
+    except Exception as e:
+        print(f"Error during update: {e}")
+        db.session.rollback()
         return {
-            'status':'failed'
+            'status': 'failed',
+            'message': str(e)
         }
-
 #Migrate Data
 def migrate_data(file_name):
     # with app.app_context():
