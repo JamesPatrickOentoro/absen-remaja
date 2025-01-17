@@ -4,6 +4,7 @@ from sqlalchemy.sql import func
 from pytz import timezone
 class Jemaat(db.Model):
     __table_args__ = {'extend_existing': True}
+    
     id_jemaat = db.Column('id_jemaat',db.Integer,primary_key=True)
     nama = db.Column('nama_jemaat',db.String(100))
     no_telp = db.Column('no_telp',db.String(100))
