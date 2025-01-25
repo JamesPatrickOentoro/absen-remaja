@@ -66,6 +66,7 @@
                     <option v-for="week in weeks" :key="week">{{ week }}</option>
                 </select>
                 <button @click="fetchAbsentStudents" class="button">Generate</button>
+                <button @click="generateSheet" class="btn btn-success export-button">Export to Excel</button>
                 <div class="new-comer-content">
                     <div class="new-comer-elements">
                         <div v-for="absentStudent in absentStudents" :key="absentStudent.id" class="new-comer-card">
@@ -102,6 +103,7 @@
 </template>
 
 <script>
+import * as XLSX from 'xlsx';
 import axios from 'axios';
 import Chart from 'chart.js/auto';
 
@@ -158,6 +160,15 @@ export default {
             for (let year = startYear; year <= currentYear; year++) {
                 this.years.push(year.toString());
             }
+        },
+        saveToExcel(data) {
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Absent-Sheet');
+            XLSX.writeFile(wb, 'data-remaja-absen.xlsx');
+        },
+        generateSheet() {
+            this.saveToExcel(this.absentStudents);
         },
 
         fetchMonthlyAbsentData() {
@@ -324,7 +335,7 @@ export default {
     /* margin-left: 90px; */
     max-width: 100%;
     overflow-x: none;
-    max-height: 80vh;
+    max-height: 100vh;
     scroll-behavior: smooth;
     overflow-y: auto;
 }
@@ -358,7 +369,7 @@ export default {
 /* new commer  */
 .new-comer-container {
     margin-left: 20px;
-    max-height: 350px;
+    max-height: 400px;
     border: 1px solid #ccc;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     padding: 20px;

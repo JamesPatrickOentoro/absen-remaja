@@ -66,21 +66,25 @@
               <input type="email" id="edit-email" v-model="editedStudent.email" class="form-control"
                 placeholder="Enter email">
             </div>
+
             <div class="form-group">
               <label for="edit-alamat">Alamat:</label>
               <input type="text" id="edit-alamat" v-model="editedStudent.alamat" class="form-control"
                 placeholder="Enter alamat">
             </div>
+
             <div class="form-group">
               <label for="edit-kelas">Kelas:</label>
               <input type="number" id="edit-kelas" v-model="editedStudent.kelas" class="form-control"
                 placeholder="Enter kelas">
             </div>
+
             <div class="form-group">
               <label for="edit-notelp">Nomor Telpon:</label>
               <input type="number" id="edit-notelp" v-model="editedStudent.no_telp" class="form-control"
                 placeholder="Enter nomor telpon">
             </div>
+            
             <button type="submit" class="btn btn-success">Save</button>
           </form>
         </div>
@@ -139,6 +143,7 @@ export default {
   created() {
     this.fetchStudents();
   },
+
   methods: {
     async fetchStudents() {
       try {
@@ -158,9 +163,9 @@ export default {
       let date = dayjs(dateString, ['YYYY-MM-DD', 'ddd, DD MMM YYYY HH:mm:ss Z']);
       if (!date.isValid()) {
         console.error("Invalid date format:", dateString);
-        return '1970-01-01'; // Nilai default jika parsing gagal
+        return '1970-01-01'; 
       }
-      return date.format('YYYY-MM-DD'); // Format menjadi 'YYYY-MM-DD'
+      return date.format('YYYY-MM-DD'); 
     },
 
     closeEditModal() {
@@ -203,11 +208,6 @@ export default {
         ...this.editedStudent,
         tgl_lahir:dayjs(this.editedStudent.tgl_lahir).format('ddd, DD MMM YYYY HH:mm:ss [GMT]')
       }
-
-  //     if (this.editedStudent.tgl_lahir) {
-  //   // Ubah ke format yang diharapkan server
-  //   this.editedStudent.tgl_lahir = dayjs(this.editedStudent.tgl_lahir).format('ddd, DD MMM YYYY HH:mm:ss [GMT]');
-  // }
 
   axios.post('absen/edit-data-jemaat', StudentDataToSend)
     .then(() => {
@@ -305,7 +305,6 @@ export default {
   padding: 20px;
 }
 
-/* Close button styles */
 .close {
   position: absolute;
   top: 10px;
@@ -327,18 +326,7 @@ export default {
   text-align: left;
 }
 
-/* .table-sticky th {
-  background-color: #f4f4f4;
-  border: 1px solid #ddd;
-}
 
-.table-sticky tbody tr:nth-child(even) {
-  background-color: #f9f9f9;
-}
-
-.table-sticky tbody tr:hover {
-  background-color: #f1f1f1;
-} */
 .table-container-attendance {
   max-height: 60vh;
   overflow-y: auto;

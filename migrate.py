@@ -48,6 +48,7 @@ def reset_and_populate_jemaat_table(csv_file_path):
     df['foto'] = ''
     df['status'] = 'active'
     df['gender'] = df['gender'].replace({'Laki-laki': 'L', 'Perempuan': 'P'})
+    df['nama'] = df['nama'].str.upper()
     df = df[df['email'] != '-']  # Hapus data dengan email tidak valid
     df = df[df['tgl_lahir'] != '-'] 
     df = df[df['kelas'] != '-'] 
