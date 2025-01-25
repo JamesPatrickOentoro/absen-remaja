@@ -32,9 +32,11 @@ def reset_and_populate_jemaat_table(csv_file_path):
     print(df)
 
     # Ubah nama kolom agar sesuai dengan model Jemaat
+
     df.columns = ['nama', 'no_telp', 'email', 'gender', 'hobi', 'sekolah', 
               'temp_lahir', 'tgl_lahir','no_telp_ortu','kelas','daerah', 'kecamatan', 'alamat']
     
+    # (nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status
     print('ini isi tgl lahir')
     print(df['tgl_lahir'])
 
@@ -42,8 +44,9 @@ def reset_and_populate_jemaat_table(csv_file_path):
     print('invalid', invalid_tgl_lahir)
 
 # Tampilkan entri yang tidak valid
-   
     # Perbaiki data yang hilang atau salah
+    df['foto'] = ''
+    df['status'] = 'active'
     df = df[df['email'] != '-']  # Hapus data dengan email tidak valid
     df = df[df['tgl_lahir'] != '-'] 
     df['tgl_lahir'] = pd.to_datetime(df['tgl_lahir'], errors='coerce',dayfirst=True)
