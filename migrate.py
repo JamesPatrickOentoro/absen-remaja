@@ -47,6 +47,7 @@ def reset_and_populate_jemaat_table(csv_file_path):
     # Perbaiki data yang hilang atau salah
     df['foto'] = ''
     df['status'] = 'active'
+    df['gender'] = df['gender'].replace({'Laki-laki': 'L', 'Perempuan': 'P'})
     df = df[df['email'] != '-']  # Hapus data dengan email tidak valid
     df = df[df['tgl_lahir'] != '-'] 
     df['tgl_lahir'] = pd.to_datetime(df['tgl_lahir'], errors='coerce',dayfirst=True)
