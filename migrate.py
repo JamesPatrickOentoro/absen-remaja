@@ -50,6 +50,7 @@ def reset_and_populate_jemaat_table(csv_file_path):
     df['gender'] = df['gender'].replace({'Laki-laki': 'L', 'Perempuan': 'P'})
     df = df[df['email'] != '-']  # Hapus data dengan email tidak valid
     df = df[df['tgl_lahir'] != '-'] 
+    df = df[df['kelas'] != '-'] 
     df['tgl_lahir'] = pd.to_datetime(df['tgl_lahir'], errors='coerce',dayfirst=True)
     print('ini isi tgl lahir2',df['tgl_lahir'])
     
