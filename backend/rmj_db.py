@@ -349,7 +349,7 @@ def parse_date(date_string):
     """Coba beberapa format tanggal."""
     for fmt in ('%a, %d %b %Y %H:%M:%S %Z', '%Y-%m-%d'):
         try:
-            return datetime.strptime(date_string, fmt).strftime('%Y-%m-%d')
+            return datetime.strptime(date_string, fmt)
         except ValueError:
             continue
     raise ValueError(f"Invalid date format: {date_string}")
@@ -364,15 +364,19 @@ def edit_data_jemaat(
     print(jemaat)
     
     if not jemaat:
+        print("Data jemaat tidak ditemukan.")
         return {
             'status': 'failed',
             'message': 'Record not found'
         }
 
     try:
+        if tgl_lahir:
+            tgl_lahir = parse_date(tgl_lahir)
+            
         print(id_jemaat, nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas)
         # tgl_lahir = datetime.strptime(tgl_lahir, '%a, %d %b %Y %H:%M:%S %Z').strftime('%Y-%m-%d')
-        tgl_lahir = parse_date(tgl_lahir).strftime('%Y-%m-%d')
+        tgl_lahir = tgl_lahir
         jemaat.nama = nama
         jemaat.no_telp = no_telp
         jemaat.email = email

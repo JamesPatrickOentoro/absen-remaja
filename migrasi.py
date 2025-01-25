@@ -8,8 +8,8 @@ excel_file_path = 'data_remaja.xlsx'  # replace with your file path
 df = pd.read_excel(excel_file_path)
 
 # Ensure the column names match your database model
-df.columns = ['nama', 'nomor', 'email', 'gender', 'hobi', 'sekolah', 'kelas', 
-              'tempat_lahir', 'tgl_lahir', 'daerah', 'kecamatan', 'alamat']
+df.columns = ['nama', 'no_telp', 'email', 'gender', 'hobi', 'sekolah',
+              'temp_lahir', 'tgl_lahir', 'kelas','daerah', 'kecamatan', 'alamat']
 
 # Convert date columns to datetime objects
 df['tgl_lahir'] = pd.to_datetime(df['tgl_lahir'])

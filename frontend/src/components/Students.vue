@@ -26,7 +26,7 @@
           <tbody>
             <tr v-for="(student, index) in students" :key="index">
               <td>{{ student.nama }}</td>
-              <td>{{ formatDate(student.tgl_lahir) }}</td>
+              <td>{{ formatDateToYMD(student.tgl_lahir) }}</td>
               <td>{{ student.kelas }}</td>
               <td>{{ student.no_telp }}</td>
               <td>{{ student.gender }}</td>
@@ -55,11 +55,7 @@
               <input type="text" id="edit-name" v-model="editedStudent.nama" class="form-control"
                 placeholder="Enter name">
             </div>
-            <!-- <div class="form-group">
-              <label for="edit-birth">Tanggal Lahir:</label>
-              <input type="datetime-local" id="edit-birth" v-model="editedStudent.tgl_lahir" class="form-control"
-                placeholder="Enter date of birth">
-            </div> -->
+     
             <div class="form-group">
               <label for="edit-birth">Tanggal Lahir:</label>
               <input type="date" id="edit-birth" v-model="editedStudent.tgl_lahir" class="form-control" />
@@ -90,11 +86,6 @@
         </div>
       </div>
     </div>
-    <!-- <div class="update-academic-year">
-      <button @click="confirmUpdateAcademicYear" class="btn btn-warning">
-        Update Academic Year
-      </button>
-    </div> -->
   </div>
 </template>
 
@@ -162,16 +153,6 @@ export default {
       }
     },
 
-    // formatDate(dateString) {
-    //   const date = dayjs(dateString); // Parsing otomatis
-    //   if (!date.isValid()) {
-    //     console.error("Invalid date format:", dateString);
-    //     return dateString; // Kembalikan nilai asli jika tidak valid
-    //   }
-    //   // Format ke format human-readable
-    //   return date.format('ddd, DD MMM YYYY HH:mm:ss [UTC]');
-    // },
-
     formatDateToYMD(dateString) {
       // Gunakan dayjs untuk parsing
       let date = dayjs(dateString, ['YYYY-MM-DD', 'ddd, DD MMM YYYY HH:mm:ss Z']);
@@ -191,7 +172,6 @@ export default {
         this.updateAcademicYear();
       }
     },
-
 
     updateAcademicYear() {
 
@@ -216,19 +196,25 @@ export default {
 
     submitEditForm() {
       if (this.editedStudent.tgl_lahir) {
-        this.editedStudent.tgl_lahir = this.formatDateToYMD(this.editedStudent.tgl_lahir);
+        this.editedStudent.tgl_lahir = dayjs(this.editedStudent.tgl_lahir).format('YYYY-MM-DD')
+        
+      }
+      const StudentDataToSend={
+        ...this.editedStudent,
+        tgl_lahir:dayjs(this.editedStudent.tgl_lahir).format('ddd, DD MMM YYYY HH:mm:ss [GMT]')
       }
 
-      if (this.editedStudent.tgl_lahir) {
-    // Ubah ke format yang diharapkan server
-    this.editedStudent.tgl_lahir = dayjs(this.editedStudent.tgl_lahir).format('ddd, DD MMM YYYY HH:mm:ss [GMT]');
-  }
+  //     if (this.editedStudent.tgl_lahir) {
+  //   // Ubah ke format yang diharapkan server
+  //   this.editedStudent.tgl_lahir = dayjs(this.editedStudent.tgl_lahir).format('ddd, DD MMM YYYY HH:mm:ss [GMT]');
+  // }
 
-  axios.post('absen/edit-data-jemaat', this.editedStudent)
+  axios.post('absen/edit-data-jemaat', StudentDataToSend)
     .then(() => {
       const updatedStudentIndex = this.students.findIndex(student => student.id_jemaat === this.editedStudent.id_jemaat);
       if (updatedStudentIndex !== -1) {
         this.students[updatedStudentIndex] = { ...this.editedStudent };
+        console.log(this.editedStudent.tgl_lahir)
       }
       this.showEditModal = false;
     })
