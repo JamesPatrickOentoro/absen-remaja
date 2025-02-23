@@ -113,13 +113,13 @@ def add_dummy_data():
     for id_jemaat, waktu_absen in absen:
         add_absen(id_jemaat, waktu_absen)
         
-def add_jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status):
+def add_jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, terakhir_hadir):
     # with app.app_context():
     wib = pytz.timezone('Asia/Jakarta')
 
     # Get the current time in UTC
     utc_now = datetime.now(pytz.utc)
-    new_jemaat = Jemaat(nama.upper(), no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, utc_now.astimezone(wib))
+    new_jemaat = Jemaat(nama.upper(), no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, utc_now.astimezone(wib),utc_now.astimezone(wib))
     db.session.add(new_jemaat)
     db.session.commit()
     return {
