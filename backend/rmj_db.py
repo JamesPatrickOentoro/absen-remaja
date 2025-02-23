@@ -113,13 +113,13 @@ def add_dummy_data():
     for id_jemaat, waktu_absen in absen:
         add_absen(id_jemaat, waktu_absen)
         
-def add_jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status):
+def add_jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, terakhir_hadir):
     # with app.app_context():
     wib = pytz.timezone('Asia/Jakarta')
 
     # Get the current time in UTC
     utc_now = datetime.now(pytz.utc)
-    new_jemaat = Jemaat(nama.upper(), no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, utc_now.astimezone(wib))
+    new_jemaat = Jemaat(nama.upper(), no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, utc_now.astimezone(wib),utc_now.astimezone(wib))
     db.session.add(new_jemaat)
     db.session.commit()
     return {
@@ -782,9 +782,9 @@ def get_long_absent(weeks_before):
     today_utc = datetime.today()
     today = wib.localize(today_utc)
     three_weeks_ago = today - timedelta(weeks=weeks_before)
-    weeks_ago_start_of_day = three_weeks_ago.replace(hour=00, minute=00, second=00, microsecond=00000)
+    weeks_ago_start_of_day = three_weeks_ago.replace(hour=00, minute=00, second=00, microsecond=000000)
     print(weeks_ago_start_of_day)
-    jemaats = db.session.query(Jemaat.id_jemaat,Jemaat.nama,Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).filter(Absen.waktu_absen < weeks_ago_start_of_day).filter(Jemaat.status == 'active').all()
+    jemaats = db.session.query(Jemaat.id_jemaat,Jemaat.nama,Jemaat.terakhir_hadir).filter(Jemaat.terakhir_hadir < weeks_ago_start_of_day).filter(Jemaat.status == 'active').all()
     latest_absen = {}
     print(jemaats,'jemaats')
     # Iterate over the results and update the dictionary with the latest waktu_absen for each id_jemaat
