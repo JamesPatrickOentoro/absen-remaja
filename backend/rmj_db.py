@@ -782,7 +782,7 @@ def get_long_absent(weeks_before):
     today_utc = datetime.today()
     today = wib.localize(today_utc)
     three_weeks_ago = today - timedelta(weeks=weeks_before)
-    weeks_ago_start_of_day = three_weeks_ago.replace(hour=23, minute=59, second=59, microsecond=999999)
+    weeks_ago_start_of_day = three_weeks_ago.replace(hour=00, minute=00, second=00, microsecond=00000)
     print(weeks_ago_start_of_day)
     jemaats = db.session.query(Jemaat.id_jemaat,Jemaat.nama,Absen.waktu_absen).join(Absen,Absen.id_jemaat == Jemaat.id_jemaat).filter(Absen.waktu_absen < weeks_ago_start_of_day).filter(Jemaat.status == 'active').all()
     latest_absen = {}
@@ -814,7 +814,7 @@ def get_long_absent(weeks_before):
 # print(login_admin("Feodor","123")) #Success
 # print(get_all_jemaat()) #Success
 # print(get_jemaat_by_id(1)) #Success
-# print(get_all_absen()) #Success
+ #Success
 # print(get_absen_by_tanggal(datetime(2023, 7, 11))) #Success
 # print(get_absen_by_id(1)) #Success
 # edit_data_jemaat

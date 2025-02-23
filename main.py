@@ -1,4 +1,5 @@
 from backend import create_app
+from backend.rmj_db import *
 import os
 import threading
 
@@ -20,8 +21,11 @@ def run_flask_app():
     
 if __name__ == '__main__':
     # Create threads for each function
+    
     npm_thread = threading.Thread(target=run_npm_serve)
     flask_thread = threading.Thread(target=run_flask_app)
+    with app.app_context():
+        print(get_long_absent(1))
 
     # Start both threads
     npm_thread.start()

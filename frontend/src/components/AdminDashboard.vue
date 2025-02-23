@@ -205,6 +205,7 @@ export default {
                     // Proses respons dari backend
                     console.log('Raw response:', response.data);
 
+
                     if (Array.isArray(response.data)) {
                         this.studentBirthdays = response.data.map(birthday => ({
                             id: birthday.id,
@@ -294,7 +295,7 @@ export default {
         fetchAbsentStudents() {
             const weeksBefore = parseInt(this.selectedWeek); // Pastikan weeksBefore diubah menjadi integer
 
-            axios.post('absen/long-absent', { weeks_before: weeksBefore })
+            axios.post('absen/long-absent', {weeks_before: weeksBefore})
                 .then(response => {
                     // Proses respons dari backend
                     console.log('Raw response:', response.data);
