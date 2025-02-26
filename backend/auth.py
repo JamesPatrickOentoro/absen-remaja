@@ -46,6 +46,7 @@ def create_student():
         alamat  = data['alamat']
         foto  = data['foto']
         status  = data['status']
+        # terakhir_hadir = 
         return jsonify(add_jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status))
     else:
         flash('Must be GET')

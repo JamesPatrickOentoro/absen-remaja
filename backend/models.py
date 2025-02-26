@@ -1,5 +1,5 @@
 from . import db
-from datetime import datetime
+from datetime import datetime,timezone
 from sqlalchemy.sql import func
 from pytz import timezone
 class Jemaat(db.Model):

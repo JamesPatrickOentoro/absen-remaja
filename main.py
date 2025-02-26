@@ -24,8 +24,9 @@ if __name__ == '__main__':
     
     npm_thread = threading.Thread(target=run_npm_serve)
     flask_thread = threading.Thread(target=run_flask_app)
-    with app.app_context():
-        print(get_long_absent(1))
+    # with app.app_context():
+        # print(get_long_absent(1))
+        # print(initiate_table())
 
     # Start both threads
     npm_thread.start()

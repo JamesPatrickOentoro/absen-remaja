@@ -84,15 +84,15 @@ from sqlalchemy import extract, distinct, between
 
 
 #Dummy
-def initiate_table():
+# def initiate_table():
     # with app.app_context():
-    db.drop_all()
-    db.create_all()
-    adm1 = Admin('Patrick','123')
-    adm2 = Admin('Feodor','111')
-    db.session.add_all([adm1,adm2])
-    db.session.commit()
-    add_dummy_data()
+    # db.drop_all()
+    # db.create_all()
+    # adm1 = Admin('Patrick','123')
+    # adm2 = Admin('Feodor','111')
+    # db.session.add_all([adm1,adm2])
+    # db.session.commit()
+    # add_dummy_data()
 
 
 def add_dummy_data():
@@ -113,7 +113,7 @@ def add_dummy_data():
     for id_jemaat, waktu_absen in absen:
         add_absen(id_jemaat, waktu_absen)
         
-def add_jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, terakhir_hadir):
+def add_jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status):
     # with app.app_context():
     wib = pytz.timezone('Asia/Jakarta')
 
@@ -806,7 +806,7 @@ def get_long_absent(weeks_before):
     return absent
 # Test
 # print(get_all_jemaat())
-# print(initiate_table()) #Success
+ #Success
 # file_name = "Data_remaja_aug_2022.csv"
 # print(migrate_data(file_name)) #Success
 # print(get_all_jemaat())
