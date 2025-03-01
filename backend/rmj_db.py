@@ -85,14 +85,14 @@ from sqlalchemy import extract, distinct, between
 
 #Dummy
 # def initiate_table():
-    # with app.app_context():
-    # db.drop_all()
-    # db.create_all()
-    # adm1 = Admin('Patrick','123')
-    # adm2 = Admin('Feodor','111')
-    # db.session.add_all([adm1,adm2])
-    # db.session.commit()
-    # add_dummy_data()
+#     with app.app_context():
+#     db.drop_all()
+#     db.create_all()
+#     # adm1 = Admin('Patrick','123')
+#     # adm2 = Admin('Feodor','111')
+#     # db.session.add_all([adm1,adm2])
+#     db.session.commit()
+#     add_dummy_data()
 
 
 def add_dummy_data():
@@ -113,13 +113,13 @@ def add_dummy_data():
     for id_jemaat, waktu_absen in absen:
         add_absen(id_jemaat, waktu_absen)
         
-def add_jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status):
+def add_jemaat(nama, no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status,tgl_daftar,terakhir_hadir):
     # with app.app_context():
     wib = pytz.timezone('Asia/Jakarta')
 
     # Get the current time in UTC
     utc_now = datetime.now(pytz.utc)
-    new_jemaat = Jemaat(nama.upper(), no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, utc_now.astimezone(wib),utc_now.astimezone(wib))
+    new_jemaat = Jemaat(nama.upper(), no_telp, email, gender, hobi, sekolah, temp_lahir, tgl_lahir, no_telp_ortu, kelas, daerah, kecamatan, alamat, foto, status, tgl_daftar,terakhir_hadir)
     db.session.add(new_jemaat)
     db.session.commit()
     return {
@@ -135,14 +135,28 @@ def add_admin(nama_admin, password, last_login):
         'status':'success'
     }
     
+# def add_absen(id_jemaat, waktu_absen):
+#     # with app.app_context():
+#     new_absen = Absen(id_jemaat, waktu_absen)
+#     db.session.add(new_absen)
+#     db.session.commit() 
+#     # pengecekan row affected, kalo > 0 itu true (ada yang ke update) kalo ngga false
+#     return True
+
 def add_absen(id_jemaat, waktu_absen):
     # with app.app_context():
     new_absen = Absen(id_jemaat, waktu_absen)
+    wib = pytz.timezone('Asia/Jakarta')
+    utc_now = datetime.now(pytz.utc)
+    jemaat = db.session.query(Jemaat).filter(Jemaat.id_jemaat == id_jemaat).first()
+    print("jemaat", jemaat)
+    jemaat.terakhir_hadir = utc_now.astimezone(wib)
+    print("jemaat1", jemaat)
+    # db.session.commit() 
     db.session.add(new_absen)
     db.session.commit() 
     # pengecekan row affected, kalo > 0 itu true (ada yang ke update) kalo ngga false
     return True
-
 
 # Login Admin
 def login_admin(input_nama_admin, input_password):
