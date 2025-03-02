@@ -794,9 +794,10 @@ def get_long_absent(weeks_before):
     absent = []
     wib = pytz.timezone('Asia/Jakarta')
     today_utc = datetime.today()
+    # today_utc = datetime.now(pytz.utc).astimezone(wib)
     today = wib.localize(today_utc)
     three_weeks_ago = today - timedelta(weeks=weeks_before)
-    weeks_ago_start_of_day = three_weeks_ago.replace(hour=00, minute=00, second=00, microsecond=000000)
+    weeks_ago_start_of_day = three_weeks_ago.replace(hour=23, minute=59, second=59, microsecond=999999)
     print(weeks_ago_start_of_day)
     jemaats = db.session.query(Jemaat.id_jemaat,Jemaat.nama,Jemaat.terakhir_hadir).filter(Jemaat.terakhir_hadir < weeks_ago_start_of_day).filter(Jemaat.status == 'active').all()
     latest_absen = {}
