@@ -620,7 +620,8 @@ def get_birthday(weeks_before=1):
     wib = pytz.timezone('Asia/Jakarta')
     utc_now = datetime.now(pytz.utc)
     today = utc_now.astimezone(wib).replace(hour=23, minute=59, second=59, microsecond=999999)
-    abs = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.tgl_lahir).filter(Jemaat.status == 'active').all()
+    start_today = utc_now.astimezone(wib).replace(hour=0, minute=0, second=0, microsecond=0)
+    abs = db.session.query(Jemaat.id_jemaat, Jemaat.nama, Jemaat.tgl_lahir).filter(Jemaat.terakhir_hadir > start_today).filter(Jemaat.status == 'active').all()
     print(abs)
     if abs == None:
         # print('type after:',type(Jemaat.tgl_lahir))
