@@ -80,15 +80,13 @@
             <!-- Birthdays -->
             <div class="new-comer-container">
                 <h2>Birthdays</h2>
-                <select v-model="selectedWeek" class="select">
+                <select v-model="selectedWeekBirthday" class="select">
                     <option disabled selected value="">Week</option>
-                    <option v-for="week in weeks" :key="week">{{ week }}</option>
+                    <option v-for="w in weeks" :key="w">{{ w }}</option>
                 </select>
-                <!-- <select v-model="selectedMonth" class="select">
-                    <option disabled selected value="">Month</option>
-                    <option v-for="(month, index) in months" :key="index" :value="index + 1">{{ month }}</option>
-                </select> -->
+    
                 <button @click="fetchBirthdays" class="button">Generate</button>
+                <button @click="generateBirthdaySheet" class="btn btn-success export-button">Export to Excel</button>
                 <div class="new-comer-content">
                     <div class="new-comer-elements">
                         <div v-for="birthday in studentBirthdays" :key="birthday.id" class="new-comer-card">
@@ -111,6 +109,7 @@ export default {
     data() {
         return {
             selectedYear: '',
+            selectedWeekBirthday: 1,
             selectedWeek: 1,
             selectedMonth: '',
             years: [], // Add years as needed
@@ -167,6 +166,15 @@ export default {
             XLSX.utils.book_append_sheet(wb, ws, 'Absent-Sheet');
             XLSX.writeFile(wb, 'data-remaja-absen.xlsx');
         },
+        saveToExcelBirthday(data) {
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Birthday-Sheet');
+            XLSX.writeFile(wb, 'Ulang Tahun Remaja.xlsx');
+        },
+        generateBirthdaySheet(){
+            this.saveToExcelBirthday(this.studentBirthdays)
+        },
         generateSheet() {
             this.saveToExcel(this.absentStudents);
         },
@@ -198,7 +206,7 @@ export default {
                 });
         },
         fetchBirthdays() {
-            const weeksBefore = parseInt(this.selectedWeek); // Pastikan weeksBefore diubah menjadi integer
+            const weeksBefore = parseInt(this.selectedWeekBirthday); // Pastikan weeksBefore diubah menjadi integer
 
             axios.post('absen/weekly-birthday', { weeks_before: weeksBefore })
                 .then(response => {
@@ -262,14 +270,6 @@ export default {
                 });
         },
         fetchNewCommers() {
-            // axios.post('absen/new-commers')
-            //     .then(response => {
-            //         this.newCommers = response.data;
-            //         console.log(this.newCommers);
-            //     })
-            //     .catch(error => {
-            //         console.error('Error fetching new commers:', error);
-            //     });
             const weeksBefore = parseInt(this.selectedWeek); // Pastikan weeksBefore diubah menjadi integer
 
             axios.post('absen/new-commers', { weeks_before: weeksBefore })
